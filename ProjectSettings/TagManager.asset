@@ -8,6 +8,9 @@ TagManager:
   - Capitan
   - Obrero
   - Enemigo
+  - Paredes
+  - BalaEnemigo
+  - BalaPlayer
   layers:
   - Default
   - TransparentFX
