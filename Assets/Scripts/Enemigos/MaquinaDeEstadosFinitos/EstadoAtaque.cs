@@ -46,7 +46,7 @@ public class EstadoAtaque : EstadosFinitosEnemigo
             disparoInstanciado.tag = "BalaEnemigo";
             disparoInstanciado.transform.position = new Vector2(disparoInstanciado.transform.position.x - 0.058f, disparoInstanciado.transform.position.y);
             disparoInstanciado.transform.rotation = new Quaternion(0, 0, 180, 0);
-            diff = GameObject.Find("Abajo").transform.position - transform.position;
+            diff = GameObject.Find("Player").transform.position - transform.position;
             //buscamos el objetivo
             //le damos velocidad
             Vector2 velocidad = diff * (controladorVidas.enemigo.speed * 0.6f) * Time.deltaTime;
