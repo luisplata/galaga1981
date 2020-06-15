@@ -4,6 +4,8 @@ using System;
 
 public class EstadoReinicio : EstadosFinitos
 {
+    //todos los enemigos estan en estado de stay?
+    public bool estanTodosLosEnemigosEsperando = false;
     public override void Start()
     {
         base.Start();
@@ -17,6 +19,7 @@ public class EstadoReinicio : EstadosFinitos
         {
             //por muerte
         }
+        estanTodosLosEnemigosEsperando = true;
     }
     public override void Salir()
     {
@@ -25,6 +28,18 @@ public class EstadoReinicio : EstadosFinitos
 
     public override void Update()
     {
+        foreach(GameObject enemigo in GameObject.FindGameObjectsWithTag("Enemigo"))
+        {
+            if (!enemigo.GetComponent<EstadoEsperar>())
+            {
+                estanTodosLosEnemigosEsperando = false;
+                break;
+            }
+            else
+            {
+                estanTodosLosEnemigosEsperando = true;
+            }
+        }
         VerificarCambios();
     }
 
@@ -36,7 +51,7 @@ public class EstadoReinicio : EstadosFinitos
         }
         else if (!GameObject.Find("Player").GetComponent<ControladorDeVidasPlayer>().estaVivo)
         {
-            GameObject.Find("Player").GetComponent<ControladorDeVidasPlayer>().vidas--;
+            
             //verificamos si lo mandamos a presentacion o para game over
             if (GameObject.Find("Player").GetComponent<ControladorDeVidasPlayer>().vidas <= 0)
             {
@@ -44,7 +59,11 @@ public class EstadoReinicio : EstadosFinitos
             }
             else
             {
-                return typeof(EstadoPresentacion);
+                if (estanTodosLosEnemigosEsperando)
+                {
+                    GameObject.Find("Player").GetComponent<ControladorDeVidasPlayer>().vidas--;
+                    return typeof(EstadoPresentacion);
+                }
             }
         }
         return GetType();

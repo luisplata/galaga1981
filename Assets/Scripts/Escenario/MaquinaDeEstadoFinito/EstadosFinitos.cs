@@ -6,9 +6,15 @@ public abstract class EstadosFinitos : MonoBehaviour
     public Escenario escenario;
     public abstract void Salir();
     private Vector2 cardinalidadDelFantasma;
+    public ComportamientoEscenario comportamiento;
+    public ControladorDeGrupos controladorDeGrupos;
+    public ControadorDeVidasDeUI vidasUI;
     public virtual void Start()
     {
-        escenario = GetComponent<ComportamientoEscenario>().escenario;
+        comportamiento = GetComponent<ComportamientoEscenario>();
+        escenario = comportamiento.escenario;
+        controladorDeGrupos = GetComponent<ControladorDeGrupos>();
+        vidasUI = GetComponent<ControadorDeVidasDeUI>();
     }
 
     public abstract void Update();

@@ -5,6 +5,8 @@ using System;
 public class EstadoPasarela : EstadosFinitosEnemigo
 {
     public GameObject objetivo;
+    private bool estaMuerto;
+    Vector2 anterior;
     public override void Start()
     {
         base.Start();
@@ -22,36 +24,39 @@ public class EstadoPasarela : EstadosFinitosEnemigo
                 break;
             }
         }
+        controladorVidas.enemigo.estacionamiento = objetivo;
     }
     public override void Salir()
     {
         //throw new NotImplementedException();
     }
-
+    private void FixedUpdate()
+    {
+        anterior = transform.position;
+    }
     public override void Update()
     {
         Vector2 diff = objetivo.transform.position - transform.position;
-        //lo mandamos con velocidad fija
-
-        //lo mandamos haca alla
-        GetComponent<Rigidbody2D>().velocity = diff;
+        //lo mandamos hacia alla
+        GetComponent<Rigidbody2D>().velocity = diff * controladorVidas.enemigo.speed * Time.deltaTime;
+        int direccionador = diff.x < 0 ? -1 : 1;
+        float angulo = Vector2.Angle(objetivo.transform.position, transform.position) * direccionador;
+        //transform.eulerAngles = new Vector3(0, 0, Vector3.forward.z * angulo);
         VerificarCambios();
     }
 
     public override Type VerficarTransiciones()
     {
-        if(transform.position != objetivo.transform.position)
+        if ((transform.position - objetivo.transform.position).magnitude < 0.02f)
         {
             //lo manda a Formacion
+            return typeof(EstadoEsperar);
+        }
+        if (controladorVidas.enemigo.estaMuerto)
+        {
+            return typeof(EstadoMuriendo);
         }
         return GetType();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.transform.CompareTag("Enemigo") || collision.transform.CompareTag("Paredes"))
-        {
-            Physics2D.IgnoreCollision(collision.gameObject.GetComponent<Collider2D>(), GetComponent<Collider2D>());
-        }
-    }
 }

@@ -14,19 +14,19 @@ public class EstadoPresentacion : EstadosFinitos
     public override void Start()
     {
         base.Start();
-        GetComponent<ComportamientoEscenario>().panel_player.SetActive(true);
+        comportamiento.panel_player.SetActive(true);
         palabraCentro = GameObject.Find("TextoAlCentro").GetComponent<TextMeshProUGUI>();
         palabraCentro.text = "Ready?";
 
         //validamos si llego por muerte o stage finalizado
         if(GameObject.FindGameObjectsWithTag("Enemigo").Length <= 0)
         {
-            GetComponent<ControladorDeGrupos>().Comenzar();
+            controladorDeGrupos.Comenzar(escenario.stage);
         }
         //seteamos al estado inicial del player
         GameObject.Find("Player").GetComponent<ControladorDeVidasPlayer>().Init();
-        //movemos al player al medio
-        GameObject.Find("Player").transform.position = new Vector2(-2.2f,-4.23f);
+        vidasUI.ActualizarVidas();
+        vidasUI.ActualizarStage(escenario.stage);
     }
     public override void Salir()
     {

@@ -7,10 +7,20 @@ public class ControladorDeVidasPlayer : MonoBehaviour
     public int vidas = 2;
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!collision.gameObject.CompareTag("BalaEnemigo"))
+        Murio(collision.gameObject);
+    }
+
+    private void Murio(GameObject collision)
+    {
+        if (collision.CompareTag("Enemigo") || collision.CompareTag("BalaEnemigo"))
         {
             GetComponent<Animator>().SetBool("estaMuerto", true);
+            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Murio(collision.gameObject);
     }
 
     public void MatarPlayer()

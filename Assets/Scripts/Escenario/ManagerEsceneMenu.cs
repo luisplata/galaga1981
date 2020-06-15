@@ -20,6 +20,10 @@ public class ManagerEsceneMenu : MonoBehaviour
             clickToContinue.gameObject.SetActive(parpadeobol);
             parpadeobol = !parpadeobol;
         }
+        if (Input.GetKey(KeyCode.Joystick1Button1))
+        {
+            InicioGame();
+        }
     }
 
     public void InicioGame()

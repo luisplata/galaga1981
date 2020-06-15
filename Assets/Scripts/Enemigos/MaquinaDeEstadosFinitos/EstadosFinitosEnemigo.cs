@@ -7,8 +7,10 @@ public abstract class EstadosFinitosEnemigo : MonoBehaviour
 
     public abstract void Salir();
     private Vector2 cardinalidadDelFantasma;
+    public ControladorDeVidaGeneralizado controladorVidas;
     public virtual void Start()
     {
+        controladorVidas = GetComponent<ControladorDeVidaGeneralizado>();
     }
 
     public abstract void Update();

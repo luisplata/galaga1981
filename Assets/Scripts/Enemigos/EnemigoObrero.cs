@@ -9,5 +9,6 @@ public class EnemigoObrero : Enemigo
     {
         base.valor = 5;
         base.tipo = "Obrero";
+        base.speed = 30*4;
     }
 }

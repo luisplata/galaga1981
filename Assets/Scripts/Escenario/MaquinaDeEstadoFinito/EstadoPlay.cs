@@ -6,12 +6,16 @@ using UnityEngine;
 public class EstadoPlay : EstadosFinitos
 {
     public GameObject playerLocal;
+    public float delta, limite;
     public override void Start()
     {
         base.Start();
+        limite = 5;
         //Tenemos que instanciar o player o activarlo
         playerLocal = GameObject.Find("Player");
         playerLocal.GetComponent<InitPlayer>().InitializarPlayer();
+        //movemos al player al medio
+        playerLocal.transform.position = new Vector2(-2.2f, -8f);
     }
     public override void Salir()
     {
@@ -20,6 +24,13 @@ public class EstadoPlay : EstadosFinitos
 
     public override void Update()
     {
+        delta += Time.deltaTime;
+        //vamos a decirle que cada cierto tiempo tome unos enemigos y los ponga a atacar
+        if(delta >= limite)
+        {
+            delta = 0;
+            controladorDeGrupos.MandarAtacarAlgunosEnemigos(escenario.stage);
+        }
 
         VerificarCambios();
     }

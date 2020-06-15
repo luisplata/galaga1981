@@ -163,6 +163,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db6fcf5fa63fcc7499013e541ac67e82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemigo: {fileID: 0}
+  quienTeElimino: {fileID: 0}
 --- !u!114 &-215026641684931444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,3 +179,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   valor: 0
   tipo: 
+  speed: 0
+  estacionamiento: {fileID: 0}
+  estaMuerto: 0
+  cansadoDeEsperar: 0
+  stage: 0
