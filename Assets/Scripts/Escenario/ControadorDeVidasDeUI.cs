@@ -12,7 +12,7 @@ public class ControadorDeVidasDeUI : MonoBehaviour
     public void ActualizarVidas()
     {
         //buscar los hijos y eliminarlos
-        for(int i = 1; i <= player.GetComponent<ControladorDeVidasPlayer>().vidas; i++)
+        for(int i = 0; i < GameObject.FindGameObjectsWithTag("Vidas").Length; i++)
         {
             if(transform.Find("hijo") != null)
             {
@@ -24,6 +24,7 @@ public class ControadorDeVidasDeUI : MonoBehaviour
         {
             GameObject vida = Instantiate(spriteDePlayer, transform);
             vida.transform.position = new Vector2(vida.transform.position.x + i, vida.transform.position.y);
+            vida.tag = "Vidas";
             vida.name = "hijo";
         }
     }

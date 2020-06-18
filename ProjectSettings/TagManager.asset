@@ -11,6 +11,7 @@ TagManager:
   - Paredes
   - BalaEnemigo
   - BalaPlayer
+  - Vidas
   layers:
   - Default
   - TransparentFX

@@ -26,16 +26,16 @@ public class EstadoAtaque : EstadosFinitosEnemigo
         //Aqui lo que tiene que hacer es ir hacia abajo 
         if (!tocoFondo)
         {
-            Vector2 velocidadDeBajda = Vector2.down * (controladorVidas.enemigo.speed*(controladorVidas.enemigo.stage)) * Time.deltaTime;
+            Vector2 velocidadDeBajda = Vector2.down * (controladorVidas.enemigo.speed*(controladorVidas.enemigo.stage == 0? 1: controladorVidas.enemigo.stage)) * Time.deltaTime;
             GetComponent<Rigidbody2D>().velocity = velocidadDeBajda;
-            int direccionador = diff.x < 0 ? -1 : 1;
-            float angulo = Vector2.Angle(Vector2.down, transform.position) * direccionador;
+            //int direccionador = diff.x < 0 ? -1 : 1;
+            //float angulo = Vector2.Angle(Vector2.down, transform.position) * direccionador;
             //transform.eulerAngles = new Vector3(0, 0, Vector3.forward.z * angulo);
         }
         else
         {
             //cuando toque fondo regresar al posicion original
-            GetComponent<Rigidbody2D>().velocity = (controladorVidas.enemigo.estacionamiento.transform.position - transform.position) * controladorVidas.enemigo.speed * Time.deltaTime;
+            GetComponent<Rigidbody2D>().velocity = (controladorVidas.enemigo.estacionamiento.transform.position - transform.position) * (controladorVidas.enemigo.speed * (controladorVidas.enemigo.stage == 0 ? 1 : controladorVidas.enemigo.stage)) * Time.deltaTime;
         }
         
         if (UnityEngine.Random.Range(1, 100) > 0 && UnityEngine.Random.Range(1, 100) <= 50 && disparara && GameObject.Find("Player").GetComponent<ControladorDeVidasPlayer>().estaVivo)

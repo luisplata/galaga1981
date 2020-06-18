@@ -16,6 +16,7 @@ public class ControladorDeVidasPlayer : MonoBehaviour
         {
             GetComponent<Animator>().SetBool("estaMuerto", true);
             GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            GetComponent<ControladorDeMovimiento>().enabled = false;
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
