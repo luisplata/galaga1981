@@ -2704,6 +2704,7 @@ GameObject:
   - component: {fileID: 1138736162}
   - component: {fileID: 1138736163}
   - component: {fileID: 1138736164}
+  - component: {fileID: 1138736165}
   m_Layer: 0
   m_Name: Izquierda
   m_TagString: Paredes
@@ -2800,6 +2801,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1138736165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1138736161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9e2f8167e0520d4eb2bb3035bc94a3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1154018715
 GameObject:
   m_ObjectHideFlags: 0
@@ -5826,6 +5839,7 @@ GameObject:
   - component: {fileID: 2121257526}
   - component: {fileID: 2121257527}
   - component: {fileID: 2121257528}
+  - component: {fileID: 2121257529}
   m_Layer: 0
   m_Name: Derecha
   m_TagString: Paredes
@@ -5922,6 +5936,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2121257529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2121257525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9e2f8167e0520d4eb2bb3035bc94a3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2137076313
 GameObject:
   m_ObjectHideFlags: 0
