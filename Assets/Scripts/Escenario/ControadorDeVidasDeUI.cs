@@ -13,7 +13,7 @@ public class ControadorDeVidasDeUI : MonoBehaviour
     {
 
         ranking.text = "";
-        StartCoroutine(GetRequest("https://juegos.peryloth.com/api/" + "score/best/galaga"));
+        StartCoroutine(GetRequest("URL" + "score/best/galaga"));
     }
 
     public void ActualizarVidas()

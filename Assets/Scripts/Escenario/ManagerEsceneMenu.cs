@@ -14,7 +14,7 @@ public class ManagerEsceneMenu : MonoBehaviour
     private void Start()
     {
         ranking.text = "";
-        StartCoroutine(GetRequest("https://juegos.peryloth.com/api/" + "score/best/galaga"));
+        StartCoroutine(GetRequest("URL" + "score/best/galaga"));
     }
     // Update is called once per frame
     void Update()
