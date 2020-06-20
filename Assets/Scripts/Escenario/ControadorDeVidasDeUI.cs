@@ -2,12 +2,19 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class ControadorDeVidasDeUI : MonoBehaviour
 {
     // Start is called before the first frame update
     public GameObject player, spriteDePlayer;
-    public TextMeshProUGUI stage;
+    public TextMeshProUGUI stage, ranking;
+    private void Start()
+    {
+
+        ranking.text = "";
+        StartCoroutine(GetRequest("https://juegos.peryloth.com/api/" + "score/best/galaga"));
+    }
 
     public void ActualizarVidas()
     {
@@ -32,6 +39,32 @@ public class ControadorDeVidasDeUI : MonoBehaviour
     public void ActualizarStage(int stageActual)
     {
         stage.text = stageActual.ToString();
+    }
+
+    IEnumerator GetRequest(string uri)
+    {
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+        {
+            // Request and wait for the desired page.
+            yield return webRequest.SendWebRequest();
+
+            string[] pages = uri.Split('/');
+            int page = pages.Length - 1;
+
+            if (webRequest.isNetworkError)
+            {
+
+                ranking.text = "Error en el servidor";
+            }
+            else
+            {
+                ranking.text = "";
+                Debug.Log(")))))" + webRequest.downloadHandler.text);
+                Score[] s = JsonHelper.FromJson<Score>(webRequest.downloadHandler.text);
+                ranking.text = s[0].score.ToString();
+                Debug.Log("1 - " + s[0].score + " - " + s[0].nombre);
+            }
+        }
     }
 
 }
