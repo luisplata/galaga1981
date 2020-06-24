@@ -5,7 +5,8 @@ using UnityEngine;
 public class ControladorDeMovimiento : MonoBehaviour
 {
     public float speed, speedDisparo;
-    public GameObject bala;
+    public GameObject bala, salidaDeSonido;
+    public AudioClip disparo;
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +46,7 @@ public class ControladorDeMovimiento : MonoBehaviour
             disparoInstanciado.transform.position = new Vector2(disparoInstanciado.transform.position.x + 0.058f, disparoInstanciado.transform.position.y);
             //le damos velocidad
             disparoInstanciado.GetComponent<Rigidbody2D>().velocity = Vector2.up * speedDisparo;
+            salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(disparo);
         }
     }
 }

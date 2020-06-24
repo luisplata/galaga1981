@@ -82,6 +82,7 @@ public class EstadoAtaque : EstadosFinitosEnemigo
             disparoInstanciado.GetComponent<Rigidbody2D>().velocity = velocidad;
             disparoInstanciado.transform.parent = null;
             disparara = false;
+            controladorVidas.salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(controladorVidas.disparo);
         }
         else
         {

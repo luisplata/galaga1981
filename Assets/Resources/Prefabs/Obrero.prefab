@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 110d35fdf50c60c46bea720fc81dfe80, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f554140440d5eca4e83de6c46026b4a3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 1
@@ -165,6 +165,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemigo: {fileID: 0}
   quienTeElimino: {fileID: 0}
+  salidaDeSonido: {fileID: 0}
+  explosion: {fileID: 8300000, guid: 180df67f391b3c94292634b3cb427044, type: 3}
+  disparo: {fileID: 8300000, guid: 2870fb113dbc45147b7bc5760f6f6e80, type: 3}
 --- !u!114 &-8877055555035830733
 MonoBehaviour:
   m_ObjectHideFlags: 0
