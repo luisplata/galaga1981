@@ -5,6 +5,8 @@ public class ControladorDeVidasPlayer : MonoBehaviour
 {
     public bool estaVivo = true;
     public int vidas = 2;
+    public GameObject salidaDeSonido;
+    public AudioClip explosion;
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Murio(collision.gameObject);
@@ -14,6 +16,7 @@ public class ControladorDeVidasPlayer : MonoBehaviour
     {
         if (collision.CompareTag("Enemigo") || collision.CompareTag("BalaEnemigo"))
         {
+            salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(explosion);
             GetComponent<Animator>().SetBool("estaMuerto", true);
             GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             GetComponent<ControladorDeMovimiento>().enabled = false;

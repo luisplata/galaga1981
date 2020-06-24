@@ -5,11 +5,12 @@ using UnityEngine;
 public class ControladorDeVidaGeneralizado : MonoBehaviour
 {
     public Enemigo enemigo;
-    public GameObject quienTeElimino;
+    public GameObject quienTeElimino, salidaDeSonido;
+    public AudioClip explosion, disparo;
     private void Start()
     {
         enemigo = GetComponent<Enemigo>();
-
+        salidaDeSonido = GameObject.Find("ControladorDeJuego");
         //ignoramos a todos los enemigos
         foreach (GameObject e in GameObject.FindGameObjectsWithTag("Enemigo"))
         {
@@ -20,6 +21,7 @@ public class ControladorDeVidaGeneralizado : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("BalaPlayer"))
         {
+            salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(explosion);
             enemigo.estaMuerto = collision.gameObject.CompareTag("BalaPlayer");
             quienTeElimino = collision.gameObject;
         }
@@ -38,6 +40,7 @@ public class ControladorDeVidaGeneralizado : MonoBehaviour
         }
         if (collision.transform.CompareTag("Player"))
         {
+            salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(explosion);
             enemigo.estaMuerto = true;
         }
     }
