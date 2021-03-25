@@ -23,7 +23,7 @@ public class ControladorDeCreditosScore : MonoBehaviour
         score.text = "Cargando";
         nombre.text = "...";
         ranking.text = "";
-        StartCoroutine(GetRequest("URL" + "score/best/galaga"));
+        StartCoroutine(GetRequest("https://juegos.peryloth.com/api/" + "score/best/galaga"));
     }
 
     public void RegistrarNombre()
@@ -84,7 +84,7 @@ public class ControladorDeCreditosScore : MonoBehaviour
         }
         form.AddField("score", score);
 
-        using (UnityWebRequest www = UnityWebRequest.Post("URL" + "guardarData/galaga", form))
+        using (UnityWebRequest www = UnityWebRequest.Post("https://juegos.peryloth.com/api/" + "guardarData/galaga", form))
         {
             yield return www.SendWebRequest();
 

@@ -1,0 +1,13 @@
+﻿# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/projectSettingsUpdater.xml
+/contentModel.xml
+/.idea.Galaga1981.iml
+/modules.xml
+# Datasource local storage ignored files
+/../../../../../../:\VideoJuegos\Galaga1981\.idea\.idea.Galaga1981\.idea/dataSources/
+/dataSources.local.xml
+# Editor-based HTTP Client requests
+/httpRequests/
