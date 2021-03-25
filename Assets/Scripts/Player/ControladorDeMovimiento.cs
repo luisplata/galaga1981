@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ControladorDeMovimiento : MonoBehaviour
@@ -7,6 +8,7 @@ public class ControladorDeMovimiento : MonoBehaviour
     public float speed, speedDisparo;
     public GameObject bala, salidaDeSonido;
     public AudioClip disparo;
+    [SerializeField] private TextMeshProUGUI log;
 
     private IInputAdapter input;
 
@@ -22,10 +24,12 @@ public class ControladorDeMovimiento : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(input.GetDirection().x != 0)
+        var directionJoistic = input.GetDirection().x;
+        log.text += directionJoistic + "\n";
+        if(directionJoistic != 0)
         {
             Vector2 direccion;
-            if(input.GetDirection().x < 0)
+            if(directionJoistic < 0)
             {
                 //es a la izq
                 direccion = Vector2.left;
