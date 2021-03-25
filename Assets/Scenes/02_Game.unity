@@ -306,6 +306,7 @@ MonoBehaviour:
   bala: {fileID: 1065908100470197480, guid: d68dfb016cfeed04f9043b73d0ec86da, type: 3}
   salidaDeSonido: {fileID: 1758548944}
   disparo: {fileID: 8300000, guid: bb8f69e45921096459a6bfc9395b9e76, type: 3}
+  log: {fileID: 1372199876}
 --- !u!114 &15475421
 MonoBehaviour:
   m_ObjectHideFlags: 0
