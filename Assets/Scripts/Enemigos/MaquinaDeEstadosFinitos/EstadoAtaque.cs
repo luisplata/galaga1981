@@ -59,7 +59,10 @@ public class EstadoAtaque : EstadosFinitosEnemigo
         if (!tocoFondo)
         {
             Vector2 velocidadDeBajda = Vector2.down * (speedEnemi * Time.deltaTime);
-            velocidadDeBajda.x = movimiento.EjecutarFuncion(deltaTimeLocal);
+            var variableInY = movimiento.EjecutarFuncion(deltaTimeLocal);
+            //Debug.Log(variableInY);
+            //transform.Rotate(new Vector3(0,0,variableInY));
+            velocidadDeBajda.x = variableInY;
             rigidbody2D1.velocity = velocidadDeBajda;
         }
         else
