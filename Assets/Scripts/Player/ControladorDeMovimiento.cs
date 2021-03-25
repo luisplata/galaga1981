@@ -25,20 +25,9 @@ public class ControladorDeMovimiento : MonoBehaviour
     void Update()
     {
         var directionJoistic = input.GetDirection().x;
-        //log.text += directionJoistic + "\n";
         if(directionJoistic != 0)
         {
             Vector2 direccion = new Vector2(directionJoistic,0);
-            /*if(directionJoistic < 0)
-            {
-                //es a la izq
-                direccion = Vector2.left;
-            }
-            else
-            {
-                //es a la der
-                direccion = Vector2.right;
-            }*/
             //lo movemos
             rigidbody2D.velocity = direccion * (speed * Time.deltaTime);
         }
