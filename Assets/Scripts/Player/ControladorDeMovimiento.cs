@@ -7,21 +7,25 @@ public class ControladorDeMovimiento : MonoBehaviour
     public float speed, speedDisparo;
     public GameObject bala, salidaDeSonido;
     public AudioClip disparo;
+
+    private IInputAdapter input;
+
+    private Rigidbody2D rigidbody2D;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        rigidbody2D = GetComponent<Rigidbody2D>();
+        input = GetComponent<InputStragety>().GetInput();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetAxis("Horizontal") != 0)
+        if(input.GetDirection().x != 0)
         {
             Vector2 direccion;
-            //es porque se esta moviendo
-            //ahora determinamos la direccion
-            if(Input.GetAxis("Horizontal") < 0)
+            if(input.GetDirection().x < 0)
             {
                 //es a la izq
                 direccion = Vector2.left;
@@ -32,13 +36,13 @@ public class ControladorDeMovimiento : MonoBehaviour
                 direccion = Vector2.right;
             }
             //lo movemos
-            GetComponent<Rigidbody2D>().velocity = direccion * speed;
+            rigidbody2D.velocity = direccion * (speed * Time.deltaTime);
         }
         else
         {
-            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+            rigidbody2D.velocity = Vector2.zero;
         }
-        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Joystick1Button1)) && GameObject.FindGameObjectsWithTag("BalaPlayer").Length < 2)
+        if (input.GetButton("Fire") && GameObject.FindGameObjectsWithTag("BalaPlayer").Length < 2)
         {
             //disparamos
             GameObject disparoInstanciado = Instantiate(bala, transform);

@@ -35,7 +35,7 @@ public class EstadoPresentacion : EstadosFinitos
 
     public override void Update()
     {
-        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Joystick1Button1)) && !comienzaPresentacion)
+        if (input.GetButton("Fire") && !comienzaPresentacion)
         {
             //cambiamos el texto al stage y esperamos 2 seg para cambiar de estado
             comienzaPresentacion = true;

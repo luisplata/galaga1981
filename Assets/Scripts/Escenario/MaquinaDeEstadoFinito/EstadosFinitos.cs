@@ -9,8 +9,10 @@ public abstract class EstadosFinitos : MonoBehaviour
     public ComportamientoEscenario comportamiento;
     public ControladorDeGrupos controladorDeGrupos;
     public ControadorDeVidasDeUI vidasUI;
+    protected IInputAdapter input;
     public virtual void Start()
     {
+        input = GetComponent<InputStragety>().GetInput();
         comportamiento = GetComponent<ComportamientoEscenario>();
         escenario = comportamiento.escenario;
         controladorDeGrupos = GetComponent<ControladorDeGrupos>();

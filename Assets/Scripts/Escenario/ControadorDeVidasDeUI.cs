@@ -9,6 +9,7 @@ public class ControadorDeVidasDeUI : MonoBehaviour
     // Start is called before the first frame update
     public GameObject player, spriteDePlayer;
     public TextMeshProUGUI stage, ranking;
+    [SerializeField] private GameObject pointToSpawnLifesUI;
     private void Start()
     {
 
@@ -30,7 +31,8 @@ public class ControadorDeVidasDeUI : MonoBehaviour
         for (int i = 1; i <= player.GetComponent<ControladorDeVidasPlayer>().vidas; i++)
         {
             GameObject vida = Instantiate(spriteDePlayer, transform);
-            vida.transform.position = new Vector2(vida.transform.position.x + i, vida.transform.position.y);
+            var position = pointToSpawnLifesUI.transform.position;
+            vida.transform.position = new Vector2(position.x + i, position.y);
             vida.tag = "Vidas";
             vida.name = "hijo";
         }
