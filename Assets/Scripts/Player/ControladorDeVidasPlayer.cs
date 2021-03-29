@@ -1,40 +1,56 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 
-public class ControladorDeVidasPlayer : MonoBehaviour
+public class ControladorDeVidasPlayer : MonoBehaviour, ILifeOfPlayerControllerView
 {
-    public bool estaVivo = true;
-    public int vidas = 2;
-    public GameObject salidaDeSonido;
-    public AudioClip explosion;
+    [field: SerializeField]
+    public bool EstaVivo
+    {
+        get { return logicLifeOfPlayer.EstaVivo; }
+        set { logicLifeOfPlayer.EstaVivo = value; }
+    }
+
+    [field: SerializeField] public int Vidas { get; set; } = 2;
+    [SerializeField] private GameObject salidaDeSonido;
+    [SerializeField] private AudioClip explosion;
+    private LogicLifeOfPlayer logicLifeOfPlayer;
+
+    private void Start()
+    {
+        logicLifeOfPlayer = new LogicLifeOfPlayer(this);
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Murio(collision.gameObject);
+        logicLifeOfPlayer.Murio(collision.gameObject.CompareTag("Enemigo"), collision.gameObject.CompareTag("BalaEnemigo"));
+    }
+    
+
+    public void PlayerDied()
+    {
+        salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(explosion);
+        GetComponent<Animator>().SetBool("estaMuerto", true);
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        GetComponent<ControladorDeMovimiento>().enabled = false;
     }
 
-    private void Murio(GameObject collision)
-    {
-        if (collision.CompareTag("Enemigo") || collision.CompareTag("BalaEnemigo"))
-        {
-            salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(explosion);
-            GetComponent<Animator>().SetBool("estaMuerto", true);
-            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            GetComponent<ControladorDeMovimiento>().enabled = false;
-        }
-    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Murio(collision.gameObject);
+        logicLifeOfPlayer.Murio(collision.CompareTag("Enemigo"), collision.CompareTag("BalaEnemigo"));
     }
-
-    public void MatarPlayer()
-    {
-        estaVivo = false;
-    }
-
+    
     public void Init()
     {
-        estaVivo = true;
+        logicLifeOfPlayer.EstaVivo = true;
         GetComponent<Animator>().SetBool("estaMuerto", false);
+    }
+
+    /// <summary>
+    /// This method is for PlayerAnimator
+    /// </summary>
+    public void KillerPlayer()
+    {
+        logicLifeOfPlayer.EstaVivo = false;
     }
 }

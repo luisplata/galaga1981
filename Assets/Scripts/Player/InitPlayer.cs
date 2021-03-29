@@ -10,6 +10,8 @@ public class InitPlayer : MonoBehaviour
     Animator ani;
     Collider2D col;
     ControladorDeMovimiento cm;
+    ControllerShooting cs;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,6 +20,7 @@ public class InitPlayer : MonoBehaviour
         ani = GetComponent<Animator>();
         col = GetComponent<Collider2D>();
         cm = GetComponent<ControladorDeMovimiento>();
+        cs = GetComponent<ControllerShooting>();
         DetenerPlayer();
     }
 
@@ -27,6 +30,7 @@ public class InitPlayer : MonoBehaviour
         ani.enabled = true;
         col.enabled = true;
         cm.enabled = true;
+        cs.enabled = true;
     }
     public void DetenerPlayer()
     {
@@ -34,5 +38,6 @@ public class InitPlayer : MonoBehaviour
         ani.enabled = false;
         col.enabled = false;
         cm.enabled = false;
+        cs.enabled = false;
     }
 }

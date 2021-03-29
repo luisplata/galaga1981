@@ -49,11 +49,11 @@ public class EstadoReinicio : EstadosFinitos
         {
             return typeof(EstadoPresentacion);
         }
-        else if (!GameObject.Find("Player").GetComponent<ControladorDeVidasPlayer>().estaVivo)
+        else if (!GameObject.Find("Player").GetComponent<ControladorDeVidasPlayer>().EstaVivo)
         {
             
             //verificamos si lo mandamos a presentacion o para game over
-            if (GameObject.Find("Player").GetComponent<ControladorDeVidasPlayer>().vidas <= 0)
+            if (GameObject.Find("Player").GetComponent<ControladorDeVidasPlayer>().Vidas <= 0)
             {
                 return typeof(EstadoGameOver);
             }
@@ -61,7 +61,7 @@ public class EstadoReinicio : EstadosFinitos
             {
                 if (estanTodosLosEnemigosEsperando)
                 {
-                    GameObject.Find("Player").GetComponent<ControladorDeVidasPlayer>().vidas--;
+                    GameObject.Find("Player").GetComponent<ControladorDeVidasPlayer>().Vidas--;
                     return typeof(EstadoPresentacion);
                 }
             }
