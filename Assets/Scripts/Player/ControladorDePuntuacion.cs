@@ -15,9 +15,9 @@ public class ControladorDePuntuacion : MonoBehaviour, IControllerPointsView
         logicPointsPlayer = new LogicPointsPlayer(this, playerPrefsAdapter);
     }
 
-    public void ShowPuntuaction(string puntuaction)
+    public void ShowPuntuaction(int puntuaction)
     {
-        puntuacionUI.text = puntuaction;
+        puntuacionUI.text = puntuaction.ToString();
     }
 
     public void AumentarPuntuacion(int puntuacion)

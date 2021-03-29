@@ -1,4 +1,4 @@
 ﻿public interface IControllerPointsView
 {
-     void ShowPuntuaction(string puntuaction);
+     void ShowPuntuaction(int puntuaction);
 }

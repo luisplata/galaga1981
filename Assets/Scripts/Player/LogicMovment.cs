@@ -11,15 +11,11 @@ public class LogicMovment
 
     public void MovePlayer(float directionJoistic)
     {
-        if(directionJoistic != 0)
+        var direccion = new Vector2(directionJoistic,0);
+        if(directionJoistic == 0)
         {
-            Vector2 direccion = new Vector2(directionJoistic,0);
-            //lo movemos
-            controllerMov.MovePlayer(direccion);
+            direccion = Vector2.zero;
         }
-        else
-        {
-            controllerMov.MovePlayer(Vector2.zero);
-        }
+        controllerMov.MovePlayer(direccion);
     }
 }

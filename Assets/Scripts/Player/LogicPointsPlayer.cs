@@ -16,7 +16,7 @@
         {
             playerPrefsAdapter.SetInt("score", 0);
         }
-        view.ShowPuntuaction(GetPoints().ToString());
+        view.ShowPuntuaction(GetPoints());
     }
 
     public void PointsUp(int pointsNews)
@@ -24,7 +24,7 @@
         //ademas de aumentar la puntuacion actualizamos la puntuacion de la UI
         var points = GetPoints() + pointsNews;
         playerPrefsAdapter.SetInt("score", points);
-        view.ShowPuntuaction(points.ToString());
+        view.ShowPuntuaction(points);
     }
 
     public int GetPoints()
