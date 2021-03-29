@@ -1,49 +1,34 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class ControladorDeMovimiento : MonoBehaviour
+public class ControladorDeMovimiento : MonoBehaviour, IControllerMov
 {
-    public float speed, speedDisparo;
-    public GameObject bala, salidaDeSonido;
-    public AudioClip disparo;
-    [SerializeField] private TextMeshProUGUI log;
-
+    public float speed;
     private IInputAdapter input;
-
     private Rigidbody2D rigidbody2D;
+    private LogicMovment logicMovment;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
         input = GetComponent<InputStragety>().GetInput();
+        logicMovment = new LogicMovment(this);
     }
 
     // Update is called once per frame
     void Update()
     {
         var directionJoistic = input.GetDirection().x;
-        if(directionJoistic != 0)
-        {
-            Vector2 direccion = new Vector2(directionJoistic,0);
-            //lo movemos
-            rigidbody2D.velocity = direccion * (speed * Time.deltaTime);
-        }
-        else
-        {
-            rigidbody2D.velocity = Vector2.zero;
-        }
-        if (input.GetButton("Fire") && GameObject.FindGameObjectsWithTag("BalaPlayer").Length < 2)
-        {
-            //disparamos
-            GameObject disparoInstanciado = Instantiate(bala, transform);
-            disparoInstanciado.tag = "BalaPlayer";
-            disparoInstanciado.transform.position = new Vector2(disparoInstanciado.transform.position.x + 0.058f, disparoInstanciado.transform.position.y);
-            //le damos velocidad
-            disparoInstanciado.GetComponent<Rigidbody2D>().velocity = Vector2.up * speedDisparo;
-            salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(disparo);
-        }
+        logicMovment.MovePlayer(directionJoistic);
+    }
+    
+
+    public void MovePlayer(Vector2 direction)
+    {
+        rigidbody2D.velocity = direction * (speed * Time.deltaTime);
     }
 }

@@ -2,34 +2,31 @@
 using System.Collections;
 using TMPro;
 
-public class ControladorDePuntuacion : MonoBehaviour
+public class ControladorDePuntuacion : MonoBehaviour, IControllerPointsView
 {
-    public TextMeshProUGUI puntuacionUI;
-    private int puntuacion;
+    [SerializeField] private TextMeshProUGUI puntuacionUI;
+    private IPlayerPrefsAdapter playerPrefsAdapter;
+
+    private LogicPointsPlayer logicPointsPlayer;
     // Use this for initialization
     void Start()
     {
-        if (PlayerPrefs.HasKey("score"))
-        {
-            puntuacion = PlayerPrefs.GetInt("score");
-        }
-        else
-        {
-            puntuacion = 0;
-        }
-        puntuacionUI.text = this.puntuacion.ToString();
+        playerPrefsAdapter = GetComponent<PlayerPrefsStrategy>().GetPlayerPrefsAdapter();
+        logicPointsPlayer = new LogicPointsPlayer(this, playerPrefsAdapter);
+    }
+
+    public void ShowPuntuaction(string puntuaction)
+    {
+        puntuacionUI.text = puntuaction;
     }
 
     public void AumentarPuntuacion(int puntuacion)
     {
-        //ademas de aumentar la puntuacion actualizamos la puntuacion de la UI
-        this.puntuacion += puntuacion;
-        puntuacionUI.text = this.puntuacion.ToString();
-        PlayerPrefs.SetInt("score", GetPuntuacion());
+        logicPointsPlayer.PointsUp(puntuacion);
     }
 
     public int GetPuntuacion()
     {
-        return this.puntuacion;
+        return logicPointsPlayer.GetPoints();
     }
 }

@@ -72,7 +72,7 @@ public class EstadoAtaque : EstadosFinitosEnemigo
         }
 
 
-        if (UnityEngine.Random.Range(1, 100) > 0 && UnityEngine.Random.Range(1, 100) <= 50 && disparara && player.GetComponent<ControladorDeVidasPlayer>().estaVivo)
+        if (UnityEngine.Random.Range(1, 100) > 0 && UnityEngine.Random.Range(1, 100) <= 50 && disparara && player.GetComponent<ControladorDeVidasPlayer>().EstaVivo)
         {
             //dispara
             //disparamos

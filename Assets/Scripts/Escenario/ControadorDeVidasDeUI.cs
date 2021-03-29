@@ -28,7 +28,7 @@ public class ControadorDeVidasDeUI : MonoBehaviour
             }
         }
         //ahora creamos los hijos necesarios
-        for (int i = 1; i <= player.GetComponent<ControladorDeVidasPlayer>().vidas; i++)
+        for (int i = 1; i <= player.GetComponent<ControladorDeVidasPlayer>().Vidas; i++)
         {
             GameObject vida = Instantiate(spriteDePlayer, transform);
             var position = pointToSpawnLifesUI.transform.position;
