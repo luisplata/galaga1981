@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ControladorDeVidaGeneralizado : MonoBehaviour
+public class ControladorDeVidaGeneralizado : MonoBehaviour, IControllerLifeOfEnemyView
 {
     public Enemigo enemigo;
-    public GameObject quienTeElimino, salidaDeSonido;
+    public GameObject salidaDeSonido;
     public AudioClip explosion, disparo;
     private void Start()
     {
@@ -19,12 +19,26 @@ public class ControladorDeVidaGeneralizado : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("BalaPlayer"))
+        if (CollisionWithEverythinOfPlayer(collision.CompareTag("BalaPlayer")))
         {
-            salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(explosion);
-            enemigo.estaMuerto = collision.gameObject.CompareTag("BalaPlayer");
-            quienTeElimino = collision.gameObject;
+            Destroy(collision.gameObject);
         }
+    }
+
+    private bool CollisionWithEverythinOfPlayer(bool isConllision)
+    {
+        if (isConllision)
+        {
+            PlayDestroyEnemy();
+        }
+
+        return isConllision;
+    }
+
+    private void PlayDestroyEnemy()
+    {
+        salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(explosion);
+        enemigo.estaMuerto = true;
     }
 
     public void TerminoDeMorir()
@@ -34,14 +48,16 @@ public class ControladorDeVidaGeneralizado : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.CompareTag("Enemigo") || collision.transform.name == "Arriba")
+        IsOtherEnemy(collision.transform.CompareTag("Enemigo"), collision.transform.name == "Arriba", collision.gameObject);
+        CollisionWithEverythinOfPlayer(collision.transform.CompareTag("Player"));
+    }
+
+
+    private void IsOtherEnemy(bool isEnemy, bool isTop, GameObject go)
+    {
+        if (isEnemy || isTop)
         {
-            Physics2D.IgnoreCollision(collision.gameObject.GetComponent<Collider2D>(), GetComponent<Collider2D>());
-        }
-        if (collision.transform.CompareTag("Player"))
-        {
-            salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(explosion);
-            enemigo.estaMuerto = true;
+            Physics2D.IgnoreCollision(go.GetComponent<Collider2D>(), GetComponent<Collider2D>());
         }
     }
 }

@@ -8,7 +8,6 @@ public class EstadoMuriendo : EstadosFinitosEnemigo
     {
         base.Start();
         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        Destroy(controladorVidas.quienTeElimino);
         GetComponent<Collider2D>().enabled = false;
         GetComponent<Animator>().SetBool("EstaMuerto", true);
         //Aumentamos la puntuacion del player

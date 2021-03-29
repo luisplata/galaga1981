@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemigo : MonoBehaviour
+public abstract class Enemigo : MonoBehaviour
 {
     public int valor;
     public string tipo;
