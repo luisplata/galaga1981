@@ -5,7 +5,7 @@ namespace NewVersion.Weapons.Projectiles
 {
     public abstract class Projectile : MonoBehaviour
     {
-        [SerializeField] protected ProyectileId projectile;
+        [SerializeField] protected ProjectileId projectile;
         [SerializeField] protected float speed;
         public string Id => projectile.Id;
         protected Rigidbody2D rb;

@@ -1,13 +1,12 @@
-﻿using NewVersion.Weapons.Projectiles;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace NewVersion.Weapons
+namespace NewVersion.Weapons.Projectiles
 {
     public class LinealProjectile : Projectile
     {
         protected override void DoStart()
         {
-            rb.velocity = Vector2.up * (speed * Time.deltaTime);
+            rb.velocity = transform.up * (speed * Time.deltaTime);
         }
 
         protected override void DoDestroy()

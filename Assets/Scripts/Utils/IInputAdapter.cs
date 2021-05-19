@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 
-public interface IInputAdapter
+namespace Utils
 {
-    Vector2 GetDirection();
-    bool GetButton(string name);
+    public interface IInputAdapter
+    {
+        Vector2 GetDirection();
+        bool GetButton(string name);
+    }
 }

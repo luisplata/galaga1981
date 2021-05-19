@@ -1,7 +1,6 @@
-﻿using NewVersion.Weapons.Projectiles;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace NewVersion.Weapons
+namespace NewVersion.Weapons.Projectiles
 {
     public class CurveProjectile : Projectile
     {
@@ -22,7 +21,8 @@ namespace NewVersion.Weapons
         protected override void DoMove()
         {
             delta += Time.deltaTime;
-            rb.velocity = Vector2.up * (speed * Time.deltaTime) + Vector2.right * (curve.Evaluate(delta) * forceAnimation);
+            var transformLocal = transform;
+            rb.velocity = transformLocal.up * (speed * Time.deltaTime) + transformLocal.right * (curve.Evaluate(delta) * forceAnimation);
         }
     }
 }
