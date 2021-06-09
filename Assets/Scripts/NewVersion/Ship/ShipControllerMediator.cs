@@ -11,19 +11,22 @@ namespace NewVersion.Ship
         [SerializeField] private ShipId id;
         [SerializeField] private MovementController movementController;
         [SerializeField] private WeaponController weaponController;
-        [SerializeField] private TypeOfInput typeInput;
+        public GameObject PointToFollow => pointToFollow;
         private GameObject pointToFollow;
         private IInputAdapter _inputAdapter;
         private bool isConfigure;
 
-        public void Configure(TypeOfInput typeOfInput, ProjectileId defaultProjectile)
+        private void Awake()
         {
             pointToFollow = new GameObject("pointToFollow");
             pointToFollow.transform.position = transform.position;
-            typeInput = typeOfInput;
-            movementController.Configure(this);
-            weaponController.Configure(this, defaultProjectile);
-            _inputAdapter = GetInput();
+        }
+
+        public void Configure(IInputAdapter typeOfInput, ProjectileId defaultProjectile, Vector2 speed, float fireRatio)
+        {
+            movementController.Configure(this,speed);
+            weaponController.Configure(this, defaultProjectile,fireRatio);
+            _inputAdapter = typeOfInput;
             isConfigure = true;
         }
 
@@ -40,19 +43,6 @@ namespace NewVersion.Ship
         }
 
         public string Id => id.Id;
-
-        public IInputAdapter GetInput()
-        {
-            switch (typeInput)
-            {
-                case TypeOfInput.TouchInput:
-                    return new InputTouchAdapter(Camera.main, pointToFollow, gameObject);
-                case TypeOfInput.MachineInput:
-                    return new InputMachine();
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
 
         public void IsMovement()
         {

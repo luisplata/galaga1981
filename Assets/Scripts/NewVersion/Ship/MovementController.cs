@@ -4,21 +4,20 @@ namespace NewVersion.Ship
 {
     public class MovementController : MonoBehaviour
     {
-        [SerializeField] private float velocity;
+        private Vector2 velocity;
         private Rigidbody2D rb;
         private IShip ship;
-        private bool isConfigurated = false;
 
-        public void Configure(IShip ship)
+        public void Configure(IShip ship, Vector2 speed)
         {
             this.ship = ship;
             rb = GetComponent<Rigidbody2D>();
-            isConfigurated = true;
+            velocity = speed;
         }
 
         public void MovePointTo(Vector2 worldPosition)
         {
-            rb.velocity = worldPosition * velocity;
+            rb.velocity = worldPosition * velocity * Time.deltaTime;
             ship.IsMovement();
         }
     }

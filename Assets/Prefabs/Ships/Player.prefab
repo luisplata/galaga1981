@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9217416822882707707}
-  - component: {fileID: 9217416822882707706}
-  - component: {fileID: 9217416822882707705}
   - component: {fileID: 9217416822882707708}
   - component: {fileID: 9217416822882707709}
+  - component: {fileID: 9217416822882707706}
+  - component: {fileID: 9217416822882707705}
   - component: {fileID: 9217416822882707710}
   m_Layer: 0
   m_Name: Player
@@ -36,35 +36,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9217416822882707706
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9217416822882707704}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d208094b264c684b833f18e57c6c9c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: {fileID: 11400000, guid: 04025e72aa61bd646832345727fb0e06, type: 2}
-  movementController: {fileID: 9217416822882707705}
-  weaponController: {fileID: 9217416822882707710}
-  typeInput: 0
---- !u!114 &9217416822882707705
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9217416822882707704}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83072724709c0c74d959429262407658, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  velocity: 20
 --- !u!50 &9217416822882707708
 Rigidbody2D:
   serializedVersion: 4
@@ -137,6 +108,33 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &9217416822882707706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9217416822882707704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d208094b264c684b833f18e57c6c9c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: {fileID: 11400000, guid: 04025e72aa61bd646832345727fb0e06, type: 2}
+  movementController: {fileID: 9217416822882707705}
+  weaponController: {fileID: 9217416822882707710}
+--- !u!114 &9217416822882707705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9217416822882707704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83072724709c0c74d959429262407658, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &9217416822882707710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,10 +148,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pointToSpawnProyectil: {fileID: 9217416823281873753}
-  fireRateInSeconds: 1
   concurrentProjectil: {fileID: 11400000, guid: 0a1281f902a72a948830e8761621f433,
     type: 2}
-  defauldProjectile: {fileID: 0}
+  defauldProjectile: {fileID: 11400000, guid: 765073d2d170877469560f8d8b9b44f5, type: 2}
   factoryProjectilesConfiguration: {fileID: 11400000, guid: 40a06ac4aab0faf4c943fee7fabd78be,
     type: 2}
 --- !u!1 &9217416823281873753

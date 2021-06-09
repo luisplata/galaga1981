@@ -6,19 +6,20 @@ namespace NewVersion.Ship
     public class WeaponController:MonoBehaviour
     {
         [SerializeField] private GameObject pointToSpawnProyectil;
-        [SerializeField] private float fireRateInSeconds;
         [SerializeField] private ProjectileId concurrentProjectil, defauldProjectile;
         [SerializeField] private FactoryProjectilesConfiguration factoryProjectilesConfiguration;
         private float fireRateDeltaTime;
         private IShip ship;
         private bool isConfigurated;
         private FactoryProjectiles factoryProjectiles;
+        private float fireRateInSeconds;
 
-        public void Configure(IShip ship, ProjectileId defaultProjectile)
+        public void Configure(IShip ship, ProjectileId defaultProjectile, float fireRatio)
         {
             defauldProjectile = defaultProjectile;
             concurrentProjectil = defauldProjectile;
             this.ship = ship;
+            fireRateInSeconds = fireRatio;
             fireRateDeltaTime = fireRateInSeconds;
             isConfigurated = true;
             factoryProjectiles = new FactoryProjectiles(Instantiate(factoryProjectilesConfiguration));

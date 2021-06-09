@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f59bae6e10334ab98e437687d0dca21e, type: 3}
-  m_Name: ShipToSpawnConfiguration
+  m_Name: PlayerShipConfiguration
   m_EditorClassIdentifier: 
   speed: {x: 700, y: 700}
   shipId: {fileID: 11400000, guid: 04025e72aa61bd646832345727fb0e06, type: 2}

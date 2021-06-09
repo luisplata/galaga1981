@@ -40,9 +40,13 @@ namespace NewVersion.Ship.Enemies
         {
             foreach (var shipConfigurationLocal in configuration.ShipToSpawnConfigurations)
             {
-                var shipInstantiate = factory.Create(shipConfigurationLocal.ShipId.Id, spawnLocation.position,
-                    spawnLocation.rotation);
-                shipInstantiate.Configure(TypeOfInput.MachineInput, shipConfigurationLocal.ProjectileId);
+                var shipBuilder = factory.Create(shipConfigurationLocal.ShipId.Id)
+                    .WithPosition(spawnLocation.position)
+                    .WithRotation(spawnLocation.rotation)
+                    .WithTypeOfInput(TypeOfInput.MachineInput)
+                    .WithShipConfiguration(shipConfigurationLocal)
+                    .WithPrefabProjectile(shipConfigurationLocal.ProjectileId);
+                var enemiShip = shipBuilder.Build();
             }
         }
     }

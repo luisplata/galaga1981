@@ -12,9 +12,9 @@ namespace NewVersion.Ship.Factory
             this.configuration = configuration;
         }
 
-        public ShipControllerMediator Create(string id, Vector3 position, Quaternion rotation)
+        public ShipBuilder Create(string id)
         {
-            return Object.Instantiate(configuration.FindShipById(id), position, rotation);
+            return new ShipBuilder().FromPrefab(configuration.FindShipById(id));
         }
     }
 }
