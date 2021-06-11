@@ -10,7 +10,9 @@ namespace NewVersion.Ship
         [SerializeField] private ShipId shipId;
         [SerializeField] private ProjectileId projectileId;
         [SerializeField] private float fireRatio;
+        [SerializeField] private AnimationCurve curve;
 
+        public AnimationCurve Curve => curve;
         public Vector2 Speed => speed;
         public ShipId ShipId => shipId;
         public ProjectileId ProjectileId => projectileId;

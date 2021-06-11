@@ -8,11 +8,13 @@ namespace NewVersion.Ship
     {
         private readonly TypeOfInput typeOfInput;
         private readonly ShipControllerMediator shipControllerMediator;
+        private readonly AnimationCurve curveMovement;
 
-        public StrategyForInput(TypeOfInput typeOfInput,ShipControllerMediator shipControllerMediator)
+        public StrategyForInput(TypeOfInput typeOfInput,ShipControllerMediator shipControllerMediator, AnimationCurve curveMovement)
         {
             this.typeOfInput = typeOfInput;
             this.shipControllerMediator = shipControllerMediator;
+            this.curveMovement = curveMovement;
         }
         
 
@@ -23,7 +25,7 @@ namespace NewVersion.Ship
                 case TypeOfInput.TouchInput:
                     return new InputTouchAdapter(Camera.main, shipControllerMediator.PointToFollow, shipControllerMediator.gameObject);
                 case TypeOfInput.MachineInput:
-                    return new InputMachine();
+                    return new InputMachine(curveMovement);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

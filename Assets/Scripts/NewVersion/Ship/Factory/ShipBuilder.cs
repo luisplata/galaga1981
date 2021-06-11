@@ -12,10 +12,17 @@ namespace NewVersion.Ship.Factory
         private TypeOfInput _typeOfInput = TypeOfInput.MachineInput;
         private ProjectileId _projectileId;
         private ShipToSpawnConfiguration _shipPlayerConfiguration;
+        private AnimationCurve curve = AnimationCurve.Linear(1, 1, 1, 1);
 
         public ShipBuilder FromPrefab(ShipControllerMediator ship)
         {
             _ship = ship;
+            return this;
+        }
+
+        public ShipBuilder WithCurve(AnimationCurve curve)
+        {
+            this.curve = curve;
             return this;
         }
 
@@ -52,7 +59,7 @@ namespace NewVersion.Ship.Factory
         public ShipControllerMediator Build()
         {
             var shipControllerMediator = Object.Instantiate(_ship, _position, _rotation);
-            var typeOfInput = new StrategyForInput(_typeOfInput, shipControllerMediator);
+            var typeOfInput = new StrategyForInput(_typeOfInput, shipControllerMediator, curve);
             Assert.IsNotNull(_projectileId);
             shipControllerMediator.Configure(typeOfInput.GetInput(),_projectileId,_shipPlayerConfiguration.Speed,_shipPlayerConfiguration.FireRatio);
 

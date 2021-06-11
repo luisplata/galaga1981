@@ -45,7 +45,8 @@ namespace NewVersion.Ship.Enemies
                     .WithRotation(spawnLocation.rotation)
                     .WithTypeOfInput(TypeOfInput.MachineInput)
                     .WithShipConfiguration(shipConfigurationLocal)
-                    .WithPrefabProjectile(shipConfigurationLocal.ProjectileId);
+                    .WithPrefabProjectile(shipConfigurationLocal.ProjectileId)
+                    .WithCurve(shipConfigurationLocal.Curve);
                 var enemiShip = shipBuilder.Build();
             }
         }
