@@ -16,7 +16,7 @@ jobs:
         projectPath:
           - ./
         unityVersion:
-          - 2019.4.10f1
+          - 2019.4.28f1
         targetPlatform:
           - WebGL # WebGL.
           - Android #Android
