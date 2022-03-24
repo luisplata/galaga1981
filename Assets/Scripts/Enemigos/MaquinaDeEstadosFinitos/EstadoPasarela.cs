@@ -4,7 +4,7 @@ using System;
 
 public class EstadoPasarela : EstadosFinitosEnemigo
 {
-    public GameObject objetivo;
+    public MovimientoDeFormacionDeEnemigos objetivo;
     private bool estaMuerto;
     Vector2 anterior;
     public override void Start()
@@ -17,9 +17,9 @@ public class EstadoPasarela : EstadosFinitosEnemigo
         {
             if (target.GetComponent<MovimientoDeFormacionDeEnemigos>().estaDisponible)
             {
-                objetivo = target;
+                objetivo = target.GetComponent<MovimientoDeFormacionDeEnemigos>();
                 //no lo dejamos disponible
-                objetivo.GetComponent<MovimientoDeFormacionDeEnemigos>().estaDisponible = false;
+                objetivo.estaDisponible = false;
                 //Cuando cambie de estado desocupa la cuadricula
                 break;
             }
@@ -47,7 +47,8 @@ public class EstadoPasarela : EstadosFinitosEnemigo
 
     public override Type VerficarTransiciones()
     {
-        if ((transform.position - objetivo.transform.position).magnitude < 0.02f)
+        Debug.Log($"{(transform.position - objetivo.transform.position).magnitude}");
+        if ((transform.position - objetivo.transform.position).magnitude < 0.2f)
         {
             //lo manda a Formacion
             return typeof(EstadoEsperar);

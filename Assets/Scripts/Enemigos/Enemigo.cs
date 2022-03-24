@@ -7,7 +7,7 @@ public abstract class Enemigo : MonoBehaviour
     public int valor;
     public string tipo;
     public float speed;
-    public GameObject estacionamiento;
+    public MovimientoDeFormacionDeEnemigos estacionamiento;
     public bool estaMuerto;
     public bool cansadoDeEsperar;
     public int stage;
