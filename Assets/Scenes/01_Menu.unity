@@ -824,7 +824,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 621631090219cb246b9ccd7f3f62686a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  urlToMessage: https://raw.githubusercontent.com/luisplata/apis_videogames/master/README.md
+  urlToMessage: https://raw.githubusercontent.com/luisplata/galaga1981/master/README.md
   ranking: {fileID: 887337829}
   message: {fileID: 1282633324}
 --- !u!114 &514542781
