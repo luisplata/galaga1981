@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 9217416822882707705}
   - component: {fileID: 9217416822882707710}
   m_Layer: 0
-  m_Name: NewPlayer
+  m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d208094b264c684b833f18e57c6c9c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: {fileID: 11400000, guid: 04025e72aa61bd646832345727fb0e06, type: 2}
+  id: {fileID: 11400000, guid: f76353db90fcd0b49998a701a87c47d4, type: 2}
   movementController: {fileID: 9217416822882707705}
   weaponController: {fileID: 9217416822882707710}
 --- !u!114 &9217416822882707705

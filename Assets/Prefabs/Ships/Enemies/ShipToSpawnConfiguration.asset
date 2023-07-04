@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ShipToSpawnConfiguration
   m_EditorClassIdentifier: 
   speed: {x: 700, y: 700}
-  shipId: {fileID: 11400000, guid: 04025e72aa61bd646832345727fb0e06, type: 2}
+  shipId: {fileID: 11400000, guid: f76353db90fcd0b49998a701a87c47d4, type: 2}
   projectileId: {fileID: 11400000, guid: 765073d2d170877469560f8d8b9b44f5, type: 2}
   fireRatio: 1
   curve:

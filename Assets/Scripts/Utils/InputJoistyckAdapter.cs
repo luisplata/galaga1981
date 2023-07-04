@@ -13,4 +13,9 @@ public class InputJoistyckAdapter : IInputAdapter
     {
         return SimpleInput.GetButtonDown(name);
     }
+
+    public bool CanMove()
+    {
+        return true;
+    }
 }

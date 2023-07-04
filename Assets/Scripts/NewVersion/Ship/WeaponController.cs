@@ -1,4 +1,5 @@
-﻿using NewVersion.Weapons;
+﻿using NewVersion.Ship.Enemies;
+using NewVersion.Weapons;
 using UnityEngine;
 
 namespace NewVersion.Ship
@@ -13,8 +14,9 @@ namespace NewVersion.Ship
         private bool isConfigurated;
         private FactoryProjectiles factoryProjectiles;
         private float fireRateInSeconds;
+        private IEnemiesSpawner _enemiesSpawner;
 
-        public void Configure(IShip ship, ProjectileId defaultProjectile, float fireRatio)
+        public void Configure(IShip ship, ProjectileId defaultProjectile, float fireRatio, IEnemiesSpawner enemiesSpawner)
         {
             defauldProjectile = defaultProjectile;
             concurrentProjectil = defauldProjectile;
@@ -23,17 +25,19 @@ namespace NewVersion.Ship
             fireRateDeltaTime = fireRateInSeconds;
             isConfigurated = true;
             factoryProjectiles = new FactoryProjectiles(Instantiate(factoryProjectilesConfiguration));
+            _enemiesSpawner = enemiesSpawner;
         }
 
         private void Update()
         {
             if (!isConfigurated) return;
-            TryShoot();
+            if(_enemiesSpawner.IsPause()) return;
             fireRateDeltaTime -= Time.deltaTime;
         }
 
         public void TryShoot()
         {
+            if(_enemiesSpawner.IsPause()) return;
             if (!(fireRateDeltaTime < 0)) return;
             Shoot();
             fireRateDeltaTime = fireRateInSeconds;
@@ -45,6 +49,7 @@ namespace NewVersion.Ship
             var projectile = factoryProjectiles.Create(concurrentProjectil.Id, 
                 transformToPointShoot.position,
                 transformToPointShoot.rotation);
+            projectile.AddingMediator(_enemiesSpawner);
             ship.IsShoot(projectile);
         }
     }

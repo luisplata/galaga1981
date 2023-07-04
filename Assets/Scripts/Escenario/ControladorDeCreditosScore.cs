@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using TMPro;
@@ -13,17 +14,19 @@ public class ControladorDeCreditosScore : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CrearScore();
-        button.SetActive(false);
+        CrearScore(()=>
+        {
+            button.SetActive(true);
+        });
     }
 
 
-    public void CrearScore()
+    public void CrearScore(Action callback = null)
     {
         score.text = "Cargando";
         nombre.text = "...";
         ranking.text = "";
-        StartCoroutine(GetRequest("https://juegos.peryloth.com/api/" + "score/best/galaga"));
+        StartCoroutine(GetRequest("https://juegos.peryloth.com/api/" + "score/best/galaga", callback));
     }
 
     public void RegistrarNombre()
@@ -31,7 +34,7 @@ public class ControladorDeCreditosScore : MonoBehaviour
         StartCoroutine(Upload());
     }
 
-    IEnumerator GetRequest(string uri)
+    IEnumerator GetRequest(string uri, Action callback = null)
     {
         using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
         {
@@ -64,8 +67,8 @@ public class ControladorDeCreditosScore : MonoBehaviour
                     Debug.Log(sco.nombre + " => " + sco.score);
                     count++;
                 }
-                button.SetActive(true);
             }
+            callback?.Invoke();
         }
     }
     IEnumerator Upload()
@@ -94,10 +97,13 @@ public class ControladorDeCreditosScore : MonoBehaviour
             }
             else
             {
-                CrearScore();
-                PlayerPrefs.SetInt("score", 0);
-                button.SetActive(false);
-                jugar.SetActive(true);
+                CrearScore(() =>
+                {
+                    PlayerPrefs.SetInt("score", 0);
+                    button.SetActive(false);
+                    nombreDeJugador.gameObject.SetActive(false);
+                    jugar.SetActive(true);
+                });
             }
         }
     }

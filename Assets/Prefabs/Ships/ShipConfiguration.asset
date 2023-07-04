@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ships:
   - {fileID: 9217416822882707706, guid: db56918b598b4ee4393609c3ae737bbc, type: 3}
+  - {fileID: 9217416822882707706, guid: 421aff5a0a24a564a823af8faa96f279, type: 3}

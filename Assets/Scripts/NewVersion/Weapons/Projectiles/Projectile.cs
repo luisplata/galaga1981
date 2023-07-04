@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using NewVersion.Ship;
+using NewVersion.Ship.Enemies;
 using UnityEngine;
 
 namespace NewVersion.Weapons.Projectiles
@@ -9,6 +11,7 @@ namespace NewVersion.Weapons.Projectiles
         [SerializeField] protected float speed;
         public string Id => projectile.Id;
         protected Rigidbody2D rb;
+        protected IEnemiesSpawner _enemiesSpawner;
 
         private void Start()
         {
@@ -30,9 +33,19 @@ namespace NewVersion.Weapons.Projectiles
 
         protected void FixedUpdate()
         {
+            if (_enemiesSpawner.IsPause())
+            {
+                rb.velocity = Vector2.zero;
+                return;
+            }
             DoMove();
         }
 
         protected abstract void DoMove();
+
+        public void AddingMediator(IEnemiesSpawner enemiesSpawner)
+        {
+            _enemiesSpawner = enemiesSpawner;
+        }
     }
 }

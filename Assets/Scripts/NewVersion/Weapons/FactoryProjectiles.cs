@@ -1,4 +1,5 @@
-﻿using NewVersion.Weapons.Projectiles;
+﻿using NewVersion.Ship.Enemies;
+using NewVersion.Weapons.Projectiles;
 using UnityEngine;
 
 namespace NewVersion.Weapons

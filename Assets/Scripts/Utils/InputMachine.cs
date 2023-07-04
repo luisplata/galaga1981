@@ -19,7 +19,13 @@ namespace Utils
 
         public bool GetButton(string name)
         {
-            return Random.Range(0, 100) < 20;
+            //return Random.Range(0, 100) < 20;
+            return true;
+        }
+
+        public bool CanMove()
+        {
+            return true;
         }
     }
 }

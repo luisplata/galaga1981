@@ -47,7 +47,7 @@ public class EstadoPasarela : EstadosFinitosEnemigo
 
     public override Type VerficarTransiciones()
     {
-        Debug.Log($"{(transform.position - objetivo.transform.position).magnitude}");
+        //Debug.Log($"{(transform.position - objetivo.transform.position).magnitude}");
         if ((transform.position - objetivo.transform.position).magnitude < 0.2f)
         {
             //lo manda a Formacion

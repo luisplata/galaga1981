@@ -1,4 +1,5 @@
-﻿using NewVersion.Weapons;
+﻿using NewVersion.Ship.Enemies;
+using NewVersion.Weapons;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -13,6 +14,7 @@ namespace NewVersion.Ship.Factory
         private ProjectileId _projectileId;
         private ShipToSpawnConfiguration _shipPlayerConfiguration;
         private AnimationCurve curve = AnimationCurve.Linear(1, 1, 1, 1);
+        private IEnemiesSpawner _mediator;
 
         public ShipBuilder FromPrefab(ShipControllerMediator ship)
         {
@@ -55,13 +57,19 @@ namespace NewVersion.Ship.Factory
             _shipPlayerConfiguration = shipPlayerConfiguration;
             return this;
         }
+        
+        public ShipBuilder WithMediator(IEnemiesSpawner mediator)
+        {
+            _mediator = mediator;
+            return this;
+        }
     
         public ShipControllerMediator Build()
         {
             var shipControllerMediator = Object.Instantiate(_ship, _position, _rotation);
             var typeOfInput = new StrategyForInput(_typeOfInput, shipControllerMediator, curve);
             Assert.IsNotNull(_projectileId);
-            shipControllerMediator.Configure(typeOfInput.GetInput(),_projectileId,_shipPlayerConfiguration.Speed,_shipPlayerConfiguration.FireRatio);
+            shipControllerMediator.Configure(typeOfInput.GetInput(),_projectileId,_shipPlayerConfiguration.Speed,_shipPlayerConfiguration.FireRatio, _mediator);
 
             return shipControllerMediator;
         }

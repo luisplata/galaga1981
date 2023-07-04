@@ -20,15 +20,12 @@ namespace NewVersion.Ship
 
         public IInputAdapter GetInput()
         {
-            switch (typeOfInput)
+            return typeOfInput switch
             {
-                case TypeOfInput.TouchInput:
-                    return new InputTouchAdapter(Camera.main, shipControllerMediator.PointToFollow, shipControllerMediator.gameObject);
-                case TypeOfInput.MachineInput:
-                    return new InputMachine(curveMovement);
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                TypeOfInput.TouchInput => new InputTouchAdapter(Camera.main, shipControllerMediator),
+                TypeOfInput.MachineInput => new InputMachine(curveMovement),
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

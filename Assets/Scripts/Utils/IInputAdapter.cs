@@ -6,5 +6,6 @@ namespace Utils
     {
         Vector2 GetDirection();
         bool GetButton(string name);
+        bool CanMove();
     }
 }

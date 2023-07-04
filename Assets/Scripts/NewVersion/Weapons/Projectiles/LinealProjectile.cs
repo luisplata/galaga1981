@@ -15,6 +15,7 @@ namespace NewVersion.Weapons.Projectiles
 
         protected override void DoMove()
         {
+            rb.velocity = transform.up * (speed * Time.deltaTime);
         }
     }
 }
