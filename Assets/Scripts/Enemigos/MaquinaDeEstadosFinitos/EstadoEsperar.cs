@@ -18,7 +18,8 @@ public class EstadoEsperar : EstadosFinitosEnemigo
     {
         Vector2 diff = controladorVidas.enemigo.estacionamiento.transform.position - transform.position;
         //lo mandamos hacia alla
-        GetComponent<Rigidbody2D>().velocity = diff * (controladorVidas.enemigo.speed * (controladorVidas.enemigo.stage == 0 ? 1 : controladorVidas.enemigo.stage)) * Time.deltaTime;
+        Vector2 velocity = diff * (controladorVidas.enemigo.speed * 10 * Time.deltaTime);
+        GetComponent<Rigidbody2D>().velocity = velocity;
         VerificarCambios();
     }
 

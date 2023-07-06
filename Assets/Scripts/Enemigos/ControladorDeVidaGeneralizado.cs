@@ -6,7 +6,7 @@ public class ControladorDeVidaGeneralizado : MonoBehaviour, IControllerLifeOfEne
 {
     public Enemigo enemigo;
     public GameObject salidaDeSonido;
-    public AudioClip explosion, disparo;
+    public AudioClip explosion, disparo, impacto;
     private void Start()
     {
         enemigo = GetComponent<Enemigo>();
@@ -29,7 +29,15 @@ public class ControladorDeVidaGeneralizado : MonoBehaviour, IControllerLifeOfEne
     {
         if (isConllision)
         {
-            PlayDestroyEnemy();
+            enemigo.realLife -= 1;
+            if (enemigo.realLife <= 0)
+            {
+                PlayDestroyEnemy();
+            }
+            else
+            {
+                salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(impacto);
+            }
         }
 
         return isConllision;

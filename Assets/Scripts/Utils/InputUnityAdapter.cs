@@ -3,18 +3,21 @@ using Utils;
 
 public class InputUnityAdapter : IInputAdapter
 {
-    public InputUnityAdapter(GameObject gameObject)
+    private readonly InputStragety _inputStragety;
+
+    public InputUnityAdapter(InputStragety inputStragety)
     {
+        _inputStragety = inputStragety;
     }
 
     public Vector2 GetDirection()
     {
-        return new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        return _inputStragety.direcctionLocal;
     }
 
     public bool GetButton(string name)
     {
-        return Input.GetButtonDown(name);
+        return SimpleInput.GetButtonDown(name);
     }
 
     public bool CanMove()

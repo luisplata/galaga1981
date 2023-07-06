@@ -50,6 +50,8 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -164,10 +166,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemigo: {fileID: 0}
-  quienTeElimino: {fileID: 0}
   salidaDeSonido: {fileID: 0}
-  explosion: {fileID: 8300000, guid: 180df67f391b3c94292634b3cb427044, type: 3}
-  disparo: {fileID: 8300000, guid: 2870fb113dbc45147b7bc5760f6f6e80, type: 3}
+  explosion: {fileID: 8300000, guid: ad32512886ae2ce49b880969410f6f59, type: 3}
+  disparo: {fileID: 8300000, guid: 5526d314b75ec24488a5f1508c8f9667, type: 3}
+  impacto: {fileID: 8300000, guid: 02e571efdd59acd47ad8d732ce3fe62a, type: 3}
 --- !u!114 &-8877055555035830733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,10 +182,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c7d3ff783183e44da9c6c2b245b0098, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  valor: 0
-  tipo: 
-  speed: 0
+  valor: 1
+  tipo: Obrero
+  speed: 120
   estacionamiento: {fileID: 0}
   estaMuerto: 0
   cansadoDeEsperar: 0
   stage: 0
+  life: 1
+  healthGrowthRate: 0.4
+  realLife: 0

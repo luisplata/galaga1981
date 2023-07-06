@@ -38,7 +38,7 @@ public class EstadoPlay : EstadosFinitos
     public override Type VerficarTransiciones()
     {
         //Aqui preguntamos cualquiera de las dos posibles variaciones de cambio de estado: Muerte o PasoDeNivel
-        if(GameObject.FindGameObjectsWithTag("Enemigo").Length <= 0 || !playerLocal.GetComponent<ControladorDeVidasPlayer>().EstaVivo)
+        if(GameObject.FindGameObjectsWithTag("Enemigo").Length <= 0 || !playerLocal.GetComponent<ControladorDeVidasPlayer>().EstaVivo && FindObjectOfType<ControladorDeGrupos>().IsFinishedSpawn)
         {
             return typeof(EstadoReinicio);
         }

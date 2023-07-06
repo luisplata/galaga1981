@@ -4,8 +4,9 @@ public class Escenario
 {
     public GameObject player;
     public int stage;
-    public void CargarEnemigos()
-    {
 
+    public Escenario()
+    {
+        stage = 1;
     }
 }

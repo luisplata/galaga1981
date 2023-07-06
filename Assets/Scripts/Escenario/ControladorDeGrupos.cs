@@ -6,6 +6,9 @@ public class ControladorDeGrupos : MonoBehaviour
 {
     int generales, capitanes, obreros, ordenLayer;
     List<Vector2> posiciones;
+    private bool isFinishedSpawn;
+    public bool IsFinishedSpawn => isFinishedSpawn;
+
     private void Start()
     {
         posiciones = new List<Vector2>();
@@ -52,44 +55,44 @@ public class ControladorDeGrupos : MonoBehaviour
     }
     IEnumerator LlenandoDinamicamente(int stage)
     {
-        //Queremos cambiar la ubicacion del controlador para que salgan desde varias partes del mapa
-
-        while (capitanes < 16)
-        {
-            yield return new WaitForSeconds(0.2f);
-            GameObject oo = Instantiate(Resources.Load("Prefabs/Capitan"), transform) as GameObject;
-            capitanes++;
-            oo.GetComponent<Renderer>().sortingOrder = ordenLayer;
-            ordenLayer++;
-            oo.GetComponent<Enemigo>().stage = stage;
-            oo.AddComponent(typeof(EstadoPasarela));
-        }
-        
-        while(generales < 4)
-        {
-            yield return new WaitForSeconds(0.2f);
-            //comenzamos a instanciar enemigos y los mandamos
-            GameObject o = Instantiate(Resources.Load("Prefabs/General"), transform) as GameObject;
-            generales++;
-            o.GetComponent<Renderer>().sortingOrder = ordenLayer;
-            ordenLayer++;
-            o.GetComponent<Enemigo>().stage = stage;
-            o.AddComponent(typeof(EstadoPasarela));
-
-        }
-
+        isFinishedSpawn = false;
+        var velocity = 0.1f;
         while (obreros < 20)
         {
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(velocity);
             //comenzamos a instanciar enemigos y los mandamos
             GameObject o = Instantiate(Resources.Load("Prefabs/Obrero"), transform) as GameObject;
             obreros++;
             o.GetComponent<Renderer>().sortingOrder = ordenLayer;
             ordenLayer++;
-            o.GetComponent<Enemigo>().stage = stage;
+            o.GetComponent<Enemigo>().Config(stage);
             o.AddComponent(typeof(EstadoPasarela));
 
         }
         
+        while (capitanes < 16)
+        {
+            yield return new WaitForSeconds(velocity);
+            GameObject oo = Instantiate(Resources.Load("Prefabs/Capitan"), transform) as GameObject;
+            capitanes++;
+            oo.GetComponent<Renderer>().sortingOrder = ordenLayer;
+            ordenLayer++;
+            oo.GetComponent<Enemigo>().Config(stage);
+            oo.AddComponent(typeof(EstadoPasarela));
+        }
+        
+        while(generales < 4)
+        {
+            yield return new WaitForSeconds(velocity);
+            //comenzamos a instanciar enemigos y los mandamos
+            GameObject o = Instantiate(Resources.Load("Prefabs/General"), transform) as GameObject;
+            generales++;
+            o.GetComponent<Renderer>().sortingOrder = ordenLayer;
+            ordenLayer++;
+            o.GetComponent<Enemigo>().Config(stage);
+            o.AddComponent(typeof(EstadoPasarela));
+
+        }
+        isFinishedSpawn = true;
     }
 }

@@ -143,6 +143,7 @@ GameObject:
   - component: {fileID: 15475423}
   - component: {fileID: 15475424}
   - component: {fileID: 15475425}
+  - component: {fileID: 15475426}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -334,7 +335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Vidas>k__BackingField: 2
   salidaDeSonido: {fileID: 1758548944}
-  explosion: {fileID: 8300000, guid: 546485905bfedbe4c987a8f47e651119, type: 3}
+  explosion: {fileID: 8300000, guid: 7b6f2c65a889532449fec3238366b6df, type: 3}
 --- !u!114 &15475423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,6 +350,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Joistick: {fileID: 274528988}
   Buttons: {fileID: 563193547}
+  direcctionLocal: {x: 0, y: 0}
+  fire: 0
 --- !u!114 &15475424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -364,7 +367,7 @@ MonoBehaviour:
   speedDisparo: 20
   salidaDeSonido: {fileID: 1758548944}
   bala: {fileID: 1065908100470197480, guid: d68dfb016cfeed04f9043b73d0ec86da, type: 3}
-  disparo: {fileID: 8300000, guid: bb8f69e45921096459a6bfc9395b9e76, type: 3}
+  disparo: {fileID: 8300000, guid: 80ccf9c1d9609bd489cefe338e0be74a, type: 3}
 --- !u!114 &15475425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -377,6 +380,113 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c48c35af26d943acb14575de440ce0f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &15475426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 15475413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 297c0852f61e2d3409c6b58615dd42fb,
+    type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 15475423}
+        m_TargetAssemblyTypeName: InputStragety, Assembly-CSharp
+        m_MethodName: OnMove
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: ffd8b334-ca30-4905-b81b-2bf16e5d1205
+    m_ActionName: Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e9e486ae-d455-4f81-91ec-0d9c69ae4211
+    m_ActionName: Player/Look[/Mouse/delta,/Touchscreen/delta,/Pen/delta]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 15475423}
+        m_TargetAssemblyTypeName: InputStragety, Assembly-CSharp
+        m_MethodName: OnFire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: f74510df-852b-4438-98cf-8a35c45fc230
+    m_ActionName: Player/Fire[/Mouse/leftButton,/Touchscreen/primaryTouch/tap]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ffae8e1e-84dd-4c84-98b4-5aac554e122a
+    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e5e5fc37-c83d-4438-99cd-74c2bff8fac2
+    m_ActionName: UI/Submit[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0cca6232-046b-4a74-bf2e-b41d9c342def
+    m_ActionName: UI/Cancel[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 636bbe98-15cc-4a17-9b0c-8ae769154bfd
+    m_ActionName: UI/Point[/Mouse/position,/Pen/position,/Touchscreen/touch0/position,/Touchscreen/touch1/position,/Touchscreen/touch2/position,/Touchscreen/touch3/position,/Touchscreen/touch4/position,/Touchscreen/touch5/position,/Touchscreen/touch6/position,/Touchscreen/touch7/position,/Touchscreen/touch8/position,/Touchscreen/touch9/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 12a50d41-3bfd-43f9-b92f-7f35e34fcdd2
+    m_ActionName: UI/Click[/Mouse/leftButton,/Pen/tip,/Touchscreen/touch0/press,/Touchscreen/touch1/press,/Touchscreen/touch2/press,/Touchscreen/touch3/press,/Touchscreen/touch4/press,/Touchscreen/touch5/press,/Touchscreen/touch6/press,/Touchscreen/touch7/press,/Touchscreen/touch8/press,/Touchscreen/touch9/press]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a800560c-8c03-4424-b55d-03fa5115e58e
+    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 451fff8f-f5f4-4b50-9bee-eef72b8af8c7
+    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 61e68e63-0c34-4754-b625-fa5558c9aff0
+    m_ActionName: UI/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e6d62c48-6a78-40b6-9cf7-8d9295f3e377
+    m_ActionName: UI/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6ed90773-9231-4932-b914-02d98a783e5d
+    m_ActionName: UI/TrackedDeviceOrientation
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &34472291
 GameObject:
   m_ObjectHideFlags: 0
@@ -453,7 +563,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -2087,7 +2197,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -63.29251, y: 138.1}
+  m_AnchoredPosition: {x: -63.29248, y: 138.1}
   m_SizeDelta: {x: 174.22882, y: 174.22887}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &563193549
@@ -2475,7 +2585,7 @@ PrefabInstance:
     - target: {fileID: 224047778984712946, guid: 3066c3a8fcfd6fc4482868bf62045594,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 51.59999
+      value: 51.599976
       objectReference: {fileID: 0}
     - target: {fileID: 224047778984712946, guid: 3066c3a8fcfd6fc4482868bf62045594,
         type: 3}
@@ -2991,7 +3101,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -67.899994, y: -0.000061035156}
+  m_AnchoredPosition: {x: -67.900024, y: -0.000061035156}
   m_SizeDelta: {x: 220.57428, y: 314.83246}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &727255356
@@ -5980,6 +6090,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Joistick: {fileID: 274528988}
   Buttons: {fileID: 563193547}
+  direcctionLocal: {x: 0, y: 0}
+  fire: 0
 --- !u!1001 &1764321627
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7563,7 +7675,7 @@ PrefabInstance:
     - target: {fileID: 224977699150327530, guid: e0815e227ed46e445b99930271e8942c,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 82.01201
+      value: 82.012024
       objectReference: {fileID: 0}
     - target: {fileID: 224977699150327530, guid: e0815e227ed46e445b99930271e8942c,
         type: 3}

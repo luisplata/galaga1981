@@ -35,4 +35,9 @@ public class ControllerShooting: MonoBehaviour , IControllerShoot
         disparoInstanciado.GetComponent<Rigidbody2D>().velocity = Vector2.up * speedDisparo;
         audioSource.PlayOneShot(disparo);
     }
+
+    public void AddBullets(int countOfBulletsMore)
+    {
+        logicShooting.AddMaxOfBullets(countOfBulletsMore);
+    }
 }
