@@ -1,13 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ComportamientoEscenario : MonoBehaviour
 {
-    public Escenario escenario = new Escenario();
+    public Escenario escenario;
     public GameObject panel_player;
-    private void Start()
+
+    private void Awake()
     {
-        escenario.stage = 1;
+        escenario = new Escenario();
     }
 }

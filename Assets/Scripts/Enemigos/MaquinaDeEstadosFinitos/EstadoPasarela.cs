@@ -36,9 +36,9 @@ public class EstadoPasarela : EstadosFinitosEnemigo
     }
     public override void Update()
     {
-        Vector2 diff = objetivo.transform.position - transform.position;
-        //lo mandamos hacia alla
-        GetComponent<Rigidbody2D>().velocity = diff * (controladorVidas.enemigo.speed*(controladorVidas.enemigo.stage == 0 ? 1 : controladorVidas.enemigo.stage)) * Time.deltaTime;
+        Vector2 diff = (objetivo.transform.position - transform.position).normalized;
+        Vector2 velocity = diff * (controladorVidas.enemigo.speed * 10 * Time.deltaTime);
+        GetComponent<Rigidbody2D>().velocity = velocity;
         int direccionador = diff.x < 0 ? -1 : 1;
         float angulo = Vector2.Angle(objetivo.transform.position, transform.position) * direccionador;
         //transform.eulerAngles = new Vector3(0, 0, Vector3.forward.z * angulo);

@@ -21,6 +21,7 @@ public class EstadoPresentacion : EstadosFinitos
         //validamos si llego por muerte o stage finalizado
         if(GameObject.FindGameObjectsWithTag("Enemigo").Length <= 0)
         {
+            Debug.Log($"Stage finalizado {escenario.stage}");
             controladorDeGrupos.Comenzar(escenario.stage);
         }
         //seteamos al estado inicial del player

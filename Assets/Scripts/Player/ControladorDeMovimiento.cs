@@ -32,4 +32,9 @@ public class ControladorDeMovimiento : MonoBehaviour, IControllerMov
     {
         rigidbody2D.velocity = direction * (speed * Time.deltaTime);
     }
+
+    public void AddSpeed(float speedMore)
+    {
+        speed += speedMore;
+    }
 }
