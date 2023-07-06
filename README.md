@@ -1,5 +1,6 @@
-The new version of Galaga is being built.
-I will try to make this new version compatible with the old version.
-And I hope you have fun with the new version.
+New version for Galaga Retro Game!
+Features:
+- Added power ups (More bullets, and movement speed).
+- New SFX
+- Difficulty curve balancing (fairer)
 By: PeryLoth
-
