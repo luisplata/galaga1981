@@ -54,11 +54,11 @@ public class EstadoAtaque : EstadosFinitosEnemigo
             deltaTimeLocal -= Time.deltaTime;
         }
         //Aqui lo que tiene que hacer es ir hacia abajo 
-        var speedEnemi = (controladorVidas.enemigo.speed * (controladorVidas.enemigo.stage <= 1 ? 0.5f : Mathf.Log(controladorVidas.enemigo.stage)) * Time.deltaTime);
+        var speedEnemi = (controladorVidas.enemigo.speed * (controladorVidas.enemigo.stage <= 1 ? 0.5f : Mathf.Log(controladorVidas.enemigo.stage)));
         //var speedEnemi = controladorVidas.enemigo.speed * Mathf.Max(1, controladorVidas.enemigo.stage) * Time.deltaTime;
         if (!tocoFondo)
         {
-            Vector2 velocidadDeBajda = Vector2.down * (speedEnemi);
+            Vector2 velocidadDeBajda = Vector2.down * (speedEnemi * Time.deltaTime);
             var variableInY = movimiento.EjecutarFuncion(deltaTimeLocal);
             //Debug.Log(variableInY);
             //transform.Rotate(new Vector3(0,0,variableInY));
@@ -83,7 +83,7 @@ public class EstadoAtaque : EstadosFinitosEnemigo
                 position = new Vector2(position.x - 0.058f, position.y);
                 disparoInstanciado.transform.position = position;
                 disparoInstanciado.transform.rotation = new Quaternion(0, 0, 180, 0);
-                var velocidad = (player.transform.position - transform.position).normalized * (speedEnemi * 2);
+                var velocidad = (player.transform.position - transform.position).normalized * (speedEnemi * 5 * Time.deltaTime);
                 disparoInstanciado.GetComponent<Rigidbody2D>().velocity = velocidad;
                 disparoInstanciado.transform.parent = null;
             }

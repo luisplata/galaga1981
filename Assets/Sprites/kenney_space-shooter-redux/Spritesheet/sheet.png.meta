@@ -885,7 +885,7 @@ TextureImporter:
       213: 1235163480012904704
     second: wingYellow_7.png
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -902,10 +902,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -944,6 +946,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -955,6 +959,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -967,6 +972,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -979,6 +985,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -991,6 +998,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -1003,6 +1011,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -7192,9 +7201,303 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+    nameFileIdTable:
+      beam0.png: 3646490248035491683
+      beam1.png: -6044696764575874939
+      beam2.png: -1638408184179387560
+      beam3.png: -7873178565918532231
+      beam4.png: -5166968913409246286
+      beam5.png: -8174246001080614513
+      beam6.png: 711465747966223245
+      beamLong1.png: 886155774455798013
+      beamLong2.png: 8790915555928736426
+      bold_silver.png: -3711355299728609468
+      bolt_bronze.png: -3689064188071477082
+      bolt_gold.png: 8082763461715426152
+      buttonBlue.png: 1294019068680278440
+      buttonGreen.png: -1364084970762469421
+      buttonRed.png: 7525693508291839157
+      buttonYellow.png: -4096383752446499499
+      cockpitBlue_0.png: 3837130071759734075
+      cockpitBlue_1.png: -7711972654998331904
+      cockpitBlue_2.png: -3099669657829740735
+      cockpitBlue_3.png: 3415711516682148479
+      cockpitBlue_4.png: -8238505057224571749
+      cockpitBlue_5.png: 8837964912350116715
+      cockpitBlue_6.png: -5062666483008613354
+      cockpitBlue_7.png: -8513700311864897586
+      cockpitGreen_0.png: -9218578022481777890
+      cockpitGreen_1.png: 5452511911173042821
+      cockpitGreen_2.png: 3566929716083127086
+      cockpitGreen_3.png: -5472813101993058446
+      cockpitGreen_4.png: -7116489491264138038
+      cockpitGreen_5.png: -2649269674437484070
+      cockpitGreen_6.png: 4282870453021652535
+      cockpitGreen_7.png: -2524788258451768313
+      cockpitRed_0.png: -3672171573856778257
+      cockpitRed_1.png: 5687129572882118783
+      cockpitRed_2.png: 4319335202327419710
+      cockpitRed_3.png: 7249890598902628553
+      cockpitRed_4.png: -2058288929581515113
+      cockpitRed_5.png: 8467282898467345583
+      cockpitRed_6.png: -7718353217241618634
+      cockpitRed_7.png: -2136137060809322968
+      cockpitYellow_0.png: -5821682429057938928
+      cockpitYellow_1.png: -8393596365437651747
+      cockpitYellow_2.png: 8201889261261836938
+      cockpitYellow_3.png: 8918626645854242598
+      cockpitYellow_4.png: 6463090127283316257
+      cockpitYellow_5.png: 5576142823379367555
+      cockpitYellow_6.png: 4883956002856256234
+      cockpitYellow_7.png: 2735845915108849529
+      cursor.png: -5953348466652540503
+      enemyBlack1.png: -4508698113951077659
+      enemyBlack2.png: 4959539353589005249
+      enemyBlack3.png: -6619663906675191081
+      enemyBlack4.png: -8763662198294554495
+      enemyBlack5.png: -2287361923395422921
+      enemyBlue1.png: 3328328576997583141
+      enemyBlue2.png: 7774770200307891486
+      enemyBlue3.png: -2957173371371200949
+      enemyBlue4.png: -7052345004396845694
+      enemyBlue5.png: 1079199761341311137
+      enemyGreen1.png: -6610940037711747316
+      enemyGreen2.png: 9053789733962595892
+      enemyGreen3.png: 3658282600550741179
+      enemyGreen4.png: 1371635291033550049
+      enemyGreen5.png: 4307901932540739245
+      enemyRed1.png: -8535788189756399308
+      enemyRed2.png: -4522803996747795011
+      enemyRed3.png: 1021604507497806049
+      enemyRed4.png: -1655781334524724447
+      enemyRed5.png: 5645763318122690536
+      engine1.png: 7378301040880279657
+      engine2.png: 6203124734314757198
+      engine3.png: -2561293471896255696
+      engine4.png: -2852872388609347510
+      engine5.png: -7393969260800644548
+      fire00.png: 1351740812517389558
+      fire01.png: 8102419236820848756
+      fire02.png: 8454783048166867450
+      fire03.png: 3073899960460502104
+      fire04.png: -8158588119256436573
+      fire05.png: 7249783839268456832
+      fire06.png: -1106769346293956970
+      fire07.png: 4160354023047995600
+      fire08.png: -1409274899496079971
+      fire09.png: -4440871810498457145
+      fire10.png: 6048276507865764938
+      fire11.png: 2550652039553797809
+      fire12.png: 6076265968685442356
+      fire13.png: -3026313772208464660
+      fire14.png: -6511428812986920385
+      fire15.png: -3284863241781250885
+      fire16.png: 8752297365800118195
+      fire17.png: 6548886528512625061
+      fire18.png: -1036965136504807210
+      fire19.png: 437340546767797571
+      gun00.png: -3321541064797330735
+      gun01.png: 7393883130103053727
+      gun02.png: -6003376888718104736
+      gun03.png: 7584171206972568781
+      gun04.png: -7645379865865487777
+      gun05.png: -5366083449385457677
+      gun06.png: -5939399024722635814
+      gun07.png: -8004872856070739849
+      gun08.png: -56488909394249877
+      gun09.png: -5830389129200487595
+      gun10.png: 2472613412994592295
+      laserBlue01.png: 2921470668926288970
+      laserBlue02.png: 3602526423769409086
+      laserBlue03.png: -1020090064025625753
+      laserBlue04.png: -7726741253512866194
+      laserBlue05.png: -1129006268114760397
+      laserBlue06.png: -655757784164609137
+      laserBlue07.png: 8353321399318934863
+      laserBlue08.png: -6498647964698370199
+      laserBlue09.png: 4016741044235484074
+      laserBlue10.png: 7869088444859223245
+      laserBlue11.png: 1364049590943795260
+      laserBlue12.png: -5828105468193207594
+      laserBlue13.png: -6397823618000266404
+      laserBlue14.png: -1788009680952464340
+      laserBlue15.png: -8820162796460001185
+      laserBlue16.png: 2355182561314163980
+      laserGreen01.png: 8738871166983892941
+      laserGreen02.png: 7101365085137390762
+      laserGreen03.png: -4924013827390446724
+      laserGreen04.png: 7989082572873131969
+      laserGreen05.png: 230797344319437898
+      laserGreen06.png: -5323291335239706552
+      laserGreen07.png: 4960783951515338031
+      laserGreen08.png: 359081235099770183
+      laserGreen09.png: 1750533318122431778
+      laserGreen10.png: -2371731189906419056
+      laserGreen11.png: 8912471915944267254
+      laserGreen12.png: -4543711948003703377
+      laserGreen13.png: -8669993147749747910
+      laserGreen14.png: -8188983256552683446
+      laserGreen15.png: -3492086862585303054
+      laserGreen16.png: -7820833839027232870
+      laserRed01.png: -5187347373322019675
+      laserRed02.png: 2795317151694090127
+      laserRed03.png: 3661578761546000931
+      laserRed04.png: -8293362312686519738
+      laserRed05.png: 8152213185097003811
+      laserRed06.png: -7875750932089707907
+      laserRed07.png: 2244685038557466302
+      laserRed08.png: 969807161020003136
+      laserRed09.png: 541864809410041170
+      laserRed10.png: -6744653185857572967
+      laserRed11.png: 7101187009279582148
+      laserRed12.png: -7889634319068221004
+      laserRed13.png: 390198226611088680
+      laserRed14.png: -788753711389941659
+      laserRed15.png: 4369162093305101258
+      laserRed16.png: -3604903149283597745
+      meteorBrown_big1.png: -8339005489133269724
+      meteorBrown_big2.png: -947072167030862117
+      meteorBrown_big3.png: -6867972004390754146
+      meteorBrown_big4.png: 987805300098070315
+      meteorBrown_med1.png: 3467865264933486527
+      meteorBrown_med3.png: 6864235435029977924
+      meteorBrown_small1.png: -8250649375594755563
+      meteorBrown_small2.png: -4431388003160355013
+      meteorBrown_tiny1.png: -8177379104631238225
+      meteorBrown_tiny2.png: -215236285221329341
+      meteorGrey_big1.png: 1290327954954949088
+      meteorGrey_big2.png: -245694023857363278
+      meteorGrey_big3.png: -6366855468589548433
+      meteorGrey_big4.png: -6733909091500271354
+      meteorGrey_med1.png: 328092247259686149
+      meteorGrey_med2.png: -7611726189556237606
+      meteorGrey_small1.png: -1009192047567407995
+      meteorGrey_small2.png: 3158903393190652685
+      meteorGrey_tiny1.png: -83818483404661103
+      meteorGrey_tiny2.png: -4619880252180113523
+      numeral0.png: -6683591975502130046
+      numeral1.png: -4294954472446593215
+      numeral2.png: 3621817367008345332
+      numeral3.png: 4484854336717043569
+      numeral4.png: -1213923486846579734
+      numeral5.png: 7893153474798392062
+      numeral6.png: -2526401654114208938
+      numeral7.png: -2864947593817152609
+      numeral8.png: 3422904947487961901
+      numeral9.png: -1347516320188645758
+      numeralX.png: 5111477472431342323
+      pill_blue.png: 1731053707704713080
+      pill_green.png: 5431849548235275718
+      pill_red.png: 4582730908298752497
+      pill_yellow.png: 8832732456259409462
+      playerLife1_blue.png: -6542045311909502710
+      playerLife1_green.png: -280619407508743635
+      playerLife1_orange.png: -1645159840110871536
+      playerLife1_red.png: -3656629337564959886
+      playerLife2_blue.png: -2561021910363445414
+      playerLife2_green.png: -4588254111092450104
+      playerLife2_orange.png: 2794106048496908037
+      playerLife2_red.png: 773177975261426795
+      playerLife3_blue.png: -1220450115188468911
+      playerLife3_green.png: -6745620357319115206
+      playerLife3_orange.png: 1550021549408369761
+      playerLife3_red.png: 649100677075123729
+      playerShip1_blue.png: 2182010870586553233
+      playerShip1_damage1.png: 5437709037145618173
+      playerShip1_damage2.png: -3443111094430537470
+      playerShip1_damage3.png: 3645352653072340200
+      playerShip1_green.png: 4086461823457673505
+      playerShip1_orange.png: 4851533150266067239
+      playerShip1_red.png: 2288492929210822553
+      playerShip2_blue.png: -8402970689181397014
+      playerShip2_damage1.png: -5157739060846212607
+      playerShip2_damage2.png: -2628411099061857690
+      playerShip2_damage3.png: -5422095630319474053
+      playerShip2_green.png: -1730901723975914595
+      playerShip2_orange.png: -8625987278910882921
+      playerShip2_red.png: -6032558302687065339
+      playerShip3_blue.png: -6536287391458957408
+      playerShip3_damage1.png: -3310842626314209242
+      playerShip3_damage2.png: -8198575606760956096
+      playerShip3_damage3.png: -5401503732398968508
+      playerShip3_green.png: -6137316354593400248
+      playerShip3_orange.png: -2871634709916022068
+      playerShip3_red.png: 1269724166452363602
+      powerupBlue.png: -602186881644547713
+      powerupBlue_bolt.png: -6066535518541817694
+      powerupBlue_shield.png: 6015116524536153082
+      powerupBlue_star.png: 118367418820200075
+      powerupGreen.png: 3808985181416546002
+      powerupGreen_bolt.png: -1838175905825336305
+      powerupGreen_shield.png: -8971159898044158050
+      powerupGreen_star.png: 8984519259080213226
+      powerupRed.png: -6705204528405895651
+      powerupRed_bolt.png: 9172342809337266121
+      powerupRed_shield.png: 1614005536539247520
+      powerupRed_star.png: -8880370675338432249
+      powerupYellow.png: 2582644265671368683
+      powerupYellow_bolt.png: -4422006916996271244
+      powerupYellow_shield.png: -2441030352292401404
+      powerupYellow_star.png: 1003888302522366858
+      scratch1.png: -3650525781784792064
+      scratch2.png: 4763412265790839939
+      scratch3.png: -6937849387448672213
+      shield1.png: 8055636226449465537
+      shield2.png: -3102023160662443161
+      shield3.png: -518384228343214380
+      shield_bronze.png: -3381572517487309965
+      shield_gold.png: -6720619369845810135
+      shield_silver.png: 6045611832034831495
+      speed.png: 160773421271448107
+      star1.png: 3310680609277666421
+      star2.png: -6263555544328688002
+      star3.png: -6844159849076111448
+      star_bronze.png: 7046362299675551346
+      star_gold.png: 8631437530027257385
+      star_silver.png: -6440998597012720240
+      things_bronze.png: 7244200078384958924
+      things_gold.png: 4436854889672128892
+      things_silver.png: -5806172446307965833
+      turretBase_big.png: 2595461128045109910
+      turretBase_small.png: -160871276437787785
+      ufoBlue.png: 147892167238007827
+      ufoGreen.png: 6251165375043374333
+      ufoRed.png: -101515349923921600
+      ufoYellow.png: -2662195974771000781
+      wingBlue_0.png: -3282575277786821151
+      wingBlue_1.png: -3778975856283944473
+      wingBlue_2.png: 7761993133193807061
+      wingBlue_3.png: -6655413271573264397
+      wingBlue_4.png: -9059544785123621154
+      wingBlue_5.png: -2186735482993268004
+      wingBlue_6.png: -5880208026252939805
+      wingBlue_7.png: 7670949949857693242
+      wingGreen_0.png: -8896654310896569240
+      wingGreen_1.png: 8605713137387789721
+      wingGreen_2.png: -8461906419013839718
+      wingGreen_3.png: -6018976141646020760
+      wingGreen_4.png: 7002217320564373851
+      wingGreen_5.png: 2235845330354079781
+      wingGreen_6.png: -613224613277202472
+      wingGreen_7.png: -2688075590036205744
+      wingRed_0.png: 5170150559982808655
+      wingRed_1.png: -6560281522590793372
+      wingRed_2.png: 8028395055862580672
+      wingRed_3.png: 15985396131609172
+      wingRed_4.png: -175158354727378939
+      wingRed_5.png: -1364340226851392766
+      wingRed_6.png: -64649555326737295
+      wingRed_7.png: 3066467157699729279
+      wingYellow_0.png: 8941380569427585736
+      wingYellow_1.png: 4481087292963261297
+      wingYellow_2.png: 401062210434779672
+      wingYellow_3.png: -491459270415945105
+      wingYellow_4.png: -7321030423937969098
+      wingYellow_5.png: -4966777128784167215
+      wingYellow_6.png: -2938354190850396204
+      wingYellow_7.png: 1235163480012904704
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
