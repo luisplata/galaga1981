@@ -30,6 +30,7 @@ public class ControladorDeMovimiento : MonoBehaviour, IControllerMov
 
     public void MovePlayer(Vector2 direction)
     {
+        Debug.Log($"direction {direction} {speed * Time.deltaTime}");
         rigidbody2D.velocity = direction * (speed * Time.deltaTime);
     }
 
