@@ -12,6 +12,7 @@ namespace V2
         [SerializeField] private float fireInterval = 0.25f;
         [SerializeField] private int maxShots = 2;
         [SerializeField] private float bulletSpeed = 15f;
+        [SerializeField] private float spawnOffsetY = 0.6f;
         [SerializeField] private Bullet bulletPrefab;
         [SerializeField] private AudioClip laserClip;
 
@@ -41,7 +42,7 @@ namespace V2
             if (timer >= fireInterval && activeBullets.Count < maxShots)
             {
                 timer = 0f;
-                Vector3 spawn = transform.position + Vector3.up * 0.6f;
+                Vector3 spawn = transform.position + Vector3.up * spawnOffsetY;
                 Bullet bullet = Instantiate(bulletPrefab, spawn, Quaternion.identity);
                 bullet.Init(bulletSpeed);
                 activeBullets.Add(bullet);

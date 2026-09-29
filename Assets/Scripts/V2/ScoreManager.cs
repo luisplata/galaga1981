@@ -13,6 +13,7 @@ namespace V2
 
         public int Score { get; private set; }
 
+        [SerializeField] private int initialScore = 0;
         [SerializeField] private TMP_Text scoreText;
 
         public void Add(int points)
@@ -24,7 +25,7 @@ namespace V2
 
         public void ResetScore()
         {
-            Score = 0;
+            Score = initialScore;
             ScoreChanged?.Invoke(Score);
             UpdateUI();
         }

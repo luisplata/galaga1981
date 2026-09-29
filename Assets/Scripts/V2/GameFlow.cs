@@ -22,6 +22,7 @@ namespace V2
         [SerializeField] private GameObject playingPanel;
         [SerializeField] private GameObject gameOverPanel;
         [SerializeField] private TMP_Text gameOverScoreText;
+        [SerializeField] private string gameOverScorePrefix = "PUNTOS: ";
         [SerializeField] private ScoreManager scoreManager;
         [SerializeField] private PlayerController player;
         [SerializeField] private EnemySimple enemy;
@@ -57,7 +58,7 @@ namespace V2
 
             if (newState == State.GameOver && gameOverScoreText != null && scoreManager != null)
             {
-                gameOverScoreText.text = "PUNTOS: " + scoreManager.Score;
+                gameOverScoreText.text = gameOverScorePrefix + scoreManager.Score;
             }
 
             bool playing = newState == State.Playing;

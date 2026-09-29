@@ -11,6 +11,7 @@ namespace V2
         [SerializeField] private float minX = -4.8f;
         [SerializeField] private float maxX = 4.8f;
         [SerializeField] private float fixedY = -7.5f;
+        [SerializeField] private float resetX = 0f;
         [SerializeField] private InputDrag inputDrag;
         [SerializeField] private Camera gameCamera;
 
@@ -64,7 +65,7 @@ namespace V2
 
         public void ResetPosition()
         {
-            transform.position = new Vector3(0f, fixedY, 0f);
+            transform.position = new Vector3(resetX, fixedY, 0f);
         }
     }
 }
