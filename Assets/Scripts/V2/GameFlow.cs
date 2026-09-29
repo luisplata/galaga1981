@@ -5,7 +5,9 @@ namespace V2
 {
     /// <summary>
     /// Flujo de estados Home -> Playing -> GameOver con UN solo panel visible por estado.
-    /// M0: al matar al único enemigo la partida termina (sin vidas ni muerte del jugador).
+    /// M1: StartGame lanza olas infinitas (WaveManager); matar enemigos ya NO termina la
+    /// partida (el kill notifica a WaveManager para el conteo de la grilla). GameOver queda
+    /// como estado sin disparo automático — M3 lo conecta con vidas.
     /// </summary>
     public class GameFlow : MonoBehaviour
     {
@@ -25,7 +27,7 @@ namespace V2
         [SerializeField] private string gameOverScorePrefix = "PUNTOS: ";
         [SerializeField] private ScoreManager scoreManager;
         [SerializeField] private PlayerController player;
-        [SerializeField] private EnemySimple enemy;
+        [SerializeField] private WaveManager waveManager;
         [SerializeField] private InputDrag inputDrag;
         [SerializeField] private Autofire autofire;
 
@@ -38,14 +40,15 @@ namespace V2
         {
             scoreManager?.ResetScore();
             player?.ResetPosition();
-            enemy?.Respawn();
+            waveManager?.StartWaves();
             SetState(State.Playing);
         }
 
-        public void OnEnemyKilled(EnemySimple killedEnemy)
+        public void OnEnemyKilled(Enemy killedEnemy)
         {
-            // M0: sin vidas ni muerte del jugador, el kill del único enemigo valida GameOver.
-            SetState(State.GameOver);
+            // M1: el kill ya no termina la partida — notifica a WaveManager para el conteo
+            // de la grilla (ola siguiente automática cuando queda vacía).
+            waveManager?.OnEnemyKilled(killedEnemy);
         }
 
         private void SetState(State newState)
