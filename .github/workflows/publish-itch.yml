@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version override for butler (e.g. 1.2.3). Empty = latest semver tag vX.Y.Z, fallback 0.0.0-dev'
+        description: 'Version override for butler (e.g. 1.2.3). Empty = 0.0.0-dev (las versiones de Itch no se tagean)'
         required: false
         type: string
         default: ''
@@ -71,10 +71,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Compute butler version (input → latest semver tag → 0.0.0-dev)
+      - name: Compute butler version (input → 0.0.0-dev)
         id: version
         run: |
           set -euo pipefail
@@ -83,14 +81,8 @@ jobs:
             echo "Using dispatch input version: $VERSION_INPUT"
             echo "version=$VERSION_INPUT" >> "$GITHUB_OUTPUT"
           else
-            LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 || true)
-            if [ -n "$LATEST_TAG" ]; then
-              echo "Using latest semver tag: $LATEST_TAG"
-              echo "version=${LATEST_TAG#v}" >> "$GITHUB_OUTPUT"
-            else
-              echo "No semver tags — using 0.0.0-dev"
-              echo "version=0.0.0-dev" >> "$GITHUB_OUTPUT"
-            fi
+            echo "No version provided — using 0.0.0-dev"
+            echo "version=0.0.0-dev" >> "$GITHUB_OUTPUT"
           fi
 
       - uses: actions/download-artifact@v4
