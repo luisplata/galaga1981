@@ -6,7 +6,7 @@ namespace NewVersion.Weapons.Projectiles
     {
         protected override void DoStart()
         {
-            rb.velocity = transform.up * (speed * Time.deltaTime);
+            rb.linearVelocity = transform.up * (speed * Time.deltaTime);
         }
 
         protected override void DoDestroy()
@@ -15,7 +15,7 @@ namespace NewVersion.Weapons.Projectiles
 
         protected override void DoMove()
         {
-            rb.velocity = transform.up * (speed * Time.deltaTime);
+            rb.linearVelocity = transform.up * (speed * Time.deltaTime);
         }
     }
 }

@@ -30,7 +30,7 @@ public class ControladorDeMovimiento : MonoBehaviour, IControllerMov
 
     public void MovePlayer(Vector2 direction)
     {
-        rigidbody2D.velocity = direction * (speed * Time.deltaTime);
+        rigidbody2D.linearVelocity = direction * (speed * Time.deltaTime);
     }
 
     public void AddSpeed(float speedMore)

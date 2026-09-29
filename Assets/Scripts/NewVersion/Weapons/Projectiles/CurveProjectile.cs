@@ -22,7 +22,7 @@ namespace NewVersion.Weapons.Projectiles
         {
             delta += Time.deltaTime;
             var transformLocal = transform;
-            rb.velocity = transformLocal.up * (speed * Time.deltaTime) + transformLocal.right * (curve.Evaluate(delta) * forceAnimation);
+            rb.linearVelocity = transformLocal.up * (speed * Time.deltaTime) + transformLocal.right * (curve.Evaluate(delta) * forceAnimation);
         }
     }
 }

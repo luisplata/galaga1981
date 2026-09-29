@@ -8,7 +8,7 @@ public class EstadoMuriendo : EstadosFinitosEnemigo
     public override void Start()
     {
         base.Start();
-        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
         GetComponent<Collider2D>().enabled = false;
         GetComponent<Animator>().SetBool("EstaMuerto", true);
         //Aumentamos la puntuacion del player

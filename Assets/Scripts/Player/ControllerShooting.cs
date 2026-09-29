@@ -32,7 +32,7 @@ public class ControllerShooting: MonoBehaviour , IControllerShoot
         position = new Vector2(position.x + 0.058f, position.y);
         disparoInstanciado.transform.position = position;
         //le damos velocidad
-        disparoInstanciado.GetComponent<Rigidbody2D>().velocity = Vector2.up * speedDisparo;
+        disparoInstanciado.GetComponent<Rigidbody2D>().linearVelocity = Vector2.up * speedDisparo;
         audioSource.PlayOneShot(disparo);
     }
 

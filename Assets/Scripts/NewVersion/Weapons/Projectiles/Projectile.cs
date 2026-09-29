@@ -35,7 +35,7 @@ namespace NewVersion.Weapons.Projectiles
         {
             if (_enemiesSpawner.IsPause())
             {
-                rb.velocity = Vector2.zero;
+                rb.linearVelocity = Vector2.zero;
                 return;
             }
             DoMove();

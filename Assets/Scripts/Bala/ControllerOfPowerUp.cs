@@ -18,7 +18,7 @@ public abstract class ControllerOfPowerUp : MonoBehaviour
 
     private void Start()
     {
-        rb.velocity = Vector2.down * speed;
+        rb.linearVelocity = Vector2.down * speed;
     }
     
     private void OnTriggerEnter2D(Collider2D other)

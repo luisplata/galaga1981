@@ -17,7 +17,7 @@ namespace NewVersion.Ship
 
         public void MovePointTo(Vector2 worldPosition)
         {
-            rb.velocity = worldPosition * velocity * Time.deltaTime;
+            rb.linearVelocity = worldPosition * velocity * Time.deltaTime;
             ship.IsMovement();
         }
     }

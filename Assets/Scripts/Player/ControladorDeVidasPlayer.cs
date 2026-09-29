@@ -31,7 +31,7 @@ public class ControladorDeVidasPlayer : MonoBehaviour, ILifeOfPlayerControllerVi
     {
         salidaDeSonido.GetComponent<AudioSource>().PlayOneShot(explosion);
         GetComponent<Animator>().SetBool("estaMuerto", true);
-        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
         GetComponent<ControladorDeMovimiento>().enabled = false;
     }
 

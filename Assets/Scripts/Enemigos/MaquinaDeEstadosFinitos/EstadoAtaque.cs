@@ -63,12 +63,12 @@ public class EstadoAtaque : EstadosFinitosEnemigo
             //Debug.Log(variableInY);
             //transform.Rotate(new Vector3(0,0,variableInY));
             velocidadDeBajda.x = variableInY;
-            rigidbody2D1.velocity = velocidadDeBajda;
+            rigidbody2D1.linearVelocity = velocidadDeBajda;
         }
         else
         {
             //cuando toque fondo regresar al posicion original
-            rigidbody2D1.velocity = (controladorVidas.enemigo.estacionamiento.transform.position - transform.position) * (controladorVidas.enemigo.speed * (controladorVidas.enemigo.stage == 0 ? 1 : controladorVidas.enemigo.stage) * Time.deltaTime);
+            rigidbody2D1.linearVelocity = (controladorVidas.enemigo.estacionamiento.transform.position - transform.position) * (controladorVidas.enemigo.speed * (controladorVidas.enemigo.stage == 0 ? 1 : controladorVidas.enemigo.stage) * Time.deltaTime);
         }
 
 
@@ -84,7 +84,7 @@ public class EstadoAtaque : EstadosFinitosEnemigo
                 disparoInstanciado.transform.position = position;
                 disparoInstanciado.transform.rotation = new Quaternion(0, 0, 180, 0);
                 var velocidad = (player.transform.position - transform.position).normalized * (speedEnemi * 5 * Time.deltaTime);
-                disparoInstanciado.GetComponent<Rigidbody2D>().velocity = velocidad;
+                disparoInstanciado.GetComponent<Rigidbody2D>().linearVelocity = velocidad;
                 disparoInstanciado.transform.parent = null;
             }
 

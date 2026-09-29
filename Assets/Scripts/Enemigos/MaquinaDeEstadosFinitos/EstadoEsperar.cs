@@ -7,7 +7,7 @@ public class EstadoEsperar : EstadosFinitosEnemigo
     public override void Start()
     {
         base.Start();
-        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
     }
     public override void Salir()
     {
@@ -19,7 +19,7 @@ public class EstadoEsperar : EstadosFinitosEnemigo
         Vector2 diff = controladorVidas.enemigo.estacionamiento.transform.position - transform.position;
         //lo mandamos hacia alla
         Vector2 velocity = diff * (controladorVidas.enemigo.speed * 15 * Time.deltaTime);
-        GetComponent<Rigidbody2D>().velocity = velocity;
+        GetComponent<Rigidbody2D>().linearVelocity = velocity;
         VerificarCambios();
     }
 
