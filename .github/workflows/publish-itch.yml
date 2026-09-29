@@ -1,0 +1,117 @@
+name: Publish to Itch (WebGL + Android)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version override for butler (e.g. 1.2.3). Empty = latest semver tag vX.Y.Z, fallback 0.0.0-dev'
+        required: false
+        type: string
+        default: ''
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+  UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
+jobs:
+  build-webgl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free disk space
+        run: .github/workflows/scripts/free_disk_space.sh
+      - uses: game-ci/unity-builder@v4
+        with:
+          projectPath: .
+          targetPlatform: WebGL
+          buildsPath: build
+          versioning: None
+      - name: Strip DoNotShip/BackUpThisFolder
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path build -Recurse -Directory -Filter "*DoNotShip*" | Remove-Item -Recurse -Force
+          Get-ChildItem -Path build -Recurse -Directory -Filter "*BackUpThisFolder*" | Remove-Item -Recurse -Force
+      - name: Package WebGL zip
+        shell: pwsh
+        run: Compress-Archive -Path build/WebGL/* -DestinationPath Galaga1981-webgl.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: webgl-build
+          path: Galaga1981-webgl.zip
+          retention-days: 1
+
+  build-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free disk space
+        run: .github/workflows/scripts/free_disk_space.sh
+      - uses: game-ci/unity-builder@v4
+        with:
+          projectPath: .
+          targetPlatform: Android
+          androidExportType: androidPackage
+          buildsPath: build
+          versioning: None
+      - name: Normalize APK
+        run: |
+          mkdir -p apk-out
+          cp "$(find build/Android -name '*.apk' | head -1)" apk-out/Galaga1981.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-build
+          path: apk-out
+          retention-days: 1
+
+  deploy-itch:
+    needs: [build-webgl, build-android]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute butler version (input → latest semver tag → 0.0.0-dev)
+        id: version
+        run: |
+          set -euo pipefail
+          VERSION_INPUT="${{ github.event.inputs.version }}"
+          if [ -n "$VERSION_INPUT" ]; then
+            echo "Using dispatch input version: $VERSION_INPUT"
+            echo "version=$VERSION_INPUT" >> "$GITHUB_OUTPUT"
+          else
+            LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1 || true)
+            if [ -n "$LATEST_TAG" ]; then
+              echo "Using latest semver tag: $LATEST_TAG"
+              echo "version=${LATEST_TAG#v}" >> "$GITHUB_OUTPUT"
+            else
+              echo "No semver tags — using 0.0.0-dev"
+              echo "version=0.0.0-dev" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - uses: actions/download-artifact@v4
+      # ── ITCH_USER / ITCH_GAME: peryloth / galaga-1981 ─────────────────────
+      # Prerequisito: crear el juego con slug `galaga-1981` en peryloth.itch.io
+      # y generar un API key con upload rights → secret BUTLER_CREDENTIALS.
+      - name: Deploy WebGL
+        uses: yeslayla/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: webgl
+          ITCH_USER: peryloth
+          ITCH_GAME: galaga-1981
+          PACKAGE: webgl-build/Galaga1981-webgl.zip
+          VERSION: ${{ steps.version.outputs.version }}
+      - name: Deploy Android
+        uses: yeslayla/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: android
+          ITCH_USER: peryloth
+          ITCH_GAME: galaga-1981
+          PACKAGE: android-build/Galaga1981.apk
+          VERSION: ${{ steps.version.outputs.version }}
