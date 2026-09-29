@@ -13,8 +13,7 @@ namespace ServiceLocatorPath
                 return;
             }
             //ServiceLocator.Instance.RegisterService<ILoadScream>(loadSceneComponent);
-            ServiceLocator.Instance.RegisterService<IPlayFabCustom>(new PlayFabCustom());
-            
+
             DontDestroyOnLoad(gameObject);
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
         }
