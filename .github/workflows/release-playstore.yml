@@ -31,10 +31,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Guard — master branch only
-        if: github.ref != 'refs/heads/master'
+      - name: Guard — main branch only
+        if: github.ref != 'refs/heads/main'
         run: |
-          echo "::error::This workflow must run from master (current: ${{ github.ref }})."
+          echo "::error::This workflow must run from main (current: ${{ github.ref }})."
           exit 1
 
       - name: Compute next SemVer tag
