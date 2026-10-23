@@ -979,8 +979,8 @@ MonoBehaviour:
     count: 4
   - type: 2
     count: 4
-  spacingX: 0.55
-  spacingY: 0.55
+  spacingX: 0.7
+  spacingY: 0.7
   gridCenter: {x: 0, y: 3}
   enemyPrefabs:
   - {fileID: 1110000000000000006, guid: 35bcd448684e5fe4185f916915baf1dc, type: 3}
