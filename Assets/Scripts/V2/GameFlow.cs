@@ -25,6 +25,9 @@ namespace V2
         [SerializeField] private GameObject gameOverPanel;
         [SerializeField] private TMP_Text gameOverScoreText;
         [SerializeField] private string gameOverScorePrefix = "PUNTOS: ";
+        [SerializeField] private TMP_Text recordText;
+        [SerializeField] private string recordPrefix = "RÉCORD: ";
+        [SerializeField] private string newRecordPrefix = "¡NUEVO RÉCORD!: ";
         [SerializeField] private TMP_Text levelText;
         [SerializeField] private string levelPrefix = "NIVEL ";
         [SerializeField] private TMP_Text livesText;
@@ -34,6 +37,10 @@ namespace V2
         [SerializeField] private WaveManager waveManager;
         [SerializeField] private InputDrag inputDrag;
         [SerializeField] private Autofire autofire;
+        [SerializeField] private FxPool fxPool;
+        [SerializeField] private CameraShake cameraShake;
+        [SerializeField] private AudioSource deathAudioSource;
+        [SerializeField] private AudioClip playerDeathClip;
         [SerializeField] private float respawnDelay = 1.2f;      // captura (M2)
         [SerializeField] private float bodyHitDelay = 1.0f;      // impacto de picada
         [SerializeField] private float invulnerabilitySeconds = 1.5f;
@@ -42,6 +49,7 @@ namespace V2
         private Enemy currentCarrier;
         private Coroutine respawnRoutine;
         private float invulnerableUntil;
+        private int highScore;
 
         /// <summary>Transform del jugador para el tractor (Enemy.PlayerTransform).</summary>
         public Transform PlayerTransform => player != null ? player.transform : null;
@@ -54,6 +62,8 @@ namespace V2
 
         private void Start()
         {
+            if (deathAudioSource == null) deathAudioSource = GetComponent<AudioSource>();
+            highScore = HighScoreStore.Load();
             if (waveManager != null) waveManager.LevelChanged += HandleLevelChanged;
             SetState(State.Home);
         }
@@ -106,6 +116,9 @@ namespace V2
 
         public void OnEnemyKilled(Enemy killedEnemy)
         {
+            // Juice: 1 flash por kill (el audio del kill lo pone el propio Enemy: sin duplicar).
+            if (killedEnemy != null) fxPool?.PlayKill(killedEnemy.Type, killedEnemy.transform.position);
+
             // M1/M2: el kill no termina la partida — WaveManager rutea al conteo de la
             // grilla o al challenging (nunca ambos).
             waveManager?.OnEnemyKilled(killedEnemy);
@@ -131,6 +144,8 @@ namespace V2
             autofire?.SetDual(false); // toda muerte pierde el dual (las balas en vuelo siguen)
             runState.TryLoseLife();
             UpdateLivesText();
+            PlayPlayerDeathFx();
+            cameraShake?.ShakeHit();
 
             if (runState.IsDead)
             {
@@ -180,6 +195,8 @@ namespace V2
 
             runState.TryLoseLife();
             UpdateLivesText();
+            PlayPlayerDeathFx();
+            cameraShake?.ShakeHit();
 
             if (runState.IsDead)
             {
@@ -241,6 +258,7 @@ namespace V2
             if (CurrentState == State.GameOver) return;
 
             invulnerableUntil = float.PositiveInfinity;
+            cameraShake?.ShakeGameOver();
 
             if (respawnRoutine != null)
             {
@@ -261,6 +279,15 @@ namespace V2
             if (autofire != null) autofire.SetFireEnabled(false);
             player?.HideForGameOver();
 
+            // Récord: única escritura de la run (PlayerPrefs.Save explícito para WebGL).
+            int finalScore = scoreManager != null ? scoreManager.Score : 0;
+            bool isNewRecord = HighScoreStore.SaveIfHigher(finalScore);
+            highScore = HighScoreStore.Load();
+            if (recordText != null)
+            {
+                recordText.text = (isNewRecord ? newRecordPrefix : recordPrefix) + highScore;
+            }
+
             SetState(State.GameOver);
         }
 
@@ -280,6 +307,16 @@ namespace V2
             bool playing = newState == State.Playing;
             if (inputDrag != null) inputDrag.enabled = playing;
             if (autofire != null) autofire.SetFireEnabled(playing);
+        }
+
+        /// <summary>Un golpe aceptado = 1 flash naranja + 1 audio (nunca duplica el del enemigo).</summary>
+        private void PlayPlayerDeathFx()
+        {
+            if (fxPool != null && player != null) fxPool.PlayPlayerDeath(player.transform.position);
+            if (deathAudioSource != null && playerDeathClip != null)
+            {
+                deathAudioSource.PlayOneShot(playerDeathClip);
+            }
         }
 
         private void UpdateLivesText()

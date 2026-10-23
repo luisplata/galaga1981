@@ -32,9 +32,8 @@ namespace V2
         [SerializeField] private float enterSwayFrequency = 2f;
         [SerializeField] private float arrivalDistance = 0.1f;
 
-        // Picada — 2 fases rectas (baja a (playerX, diveTargetY) → retorna al slot)
+        // Picada — 2 fases rectas (baja a (playerX, playerY) → retorna al slot)
         [SerializeField] private float diveSpeed = 7f;
-        [SerializeField] private float diveTargetY = -6f;   // zona del jugador (sin colisión en M1)
         [SerializeField] private float returnSpeed = 6f;
 
         // FlyThrough (M2 challenging): cruce bezier de borde a borde, sin slot ni picada.
@@ -53,6 +52,7 @@ namespace V2
         private const float HitFlashDuration = 0.08f;
 
         private int initialHp;
+        private float initialDiveSpeed;
         private float enterTime;
         private float enterStartY;
         private float divePlayerX;
@@ -86,6 +86,7 @@ namespace V2
             if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
             Beam = GetComponentInChildren<TractorBeam>(true);
             initialHp = hp;
+            initialDiveSpeed = diveSpeed;
         }
 
         /// <summary>
@@ -109,12 +110,6 @@ namespace V2
             enterTime = Time.time;
         }
 
-        /// <summary>Picada hacia la X del jugador con la Y por defecto del prefab.</summary>
-        public void StartDive(float playerX)
-        {
-            StartDive(playerX, diveTargetY);
-        }
-
         /// <summary>
         /// Inicia la picada de 2 fases rectas hacia (playerX, targetY) y retorno al slot.
         /// X e Y se congelan al iniciar (telegraph). Sólo desde Formation.
@@ -136,12 +131,22 @@ namespace V2
         public void ResetEnemy()
         {
             hp = initialHp;
+            diveSpeed = initialDiveSpeed;
             hitFlashTimer = 0f;
             hasHitPlayerThisDive = false;
             divingDown = false;
             if (spriteRenderer != null) spriteRenderer.color = Color.white;
             Beam?.Cut();
             ReleaseHeldShip();
+        }
+
+        /// <summary>
+        /// Escalado M3: multiplica la velocidad base cacheada en Awake (1.0 = base).
+        /// ResetEnemy restaura el valor original al reutilizar la instancia.
+        /// </summary>
+        public void SetDiveSpeedMul(float mul)
+        {
+            diveSpeed = initialDiveSpeed * mul;
         }
 
         /// <summary>
@@ -334,7 +339,10 @@ namespace V2
             }
 
             // Puntaje por estado (02-datos): picada paga pointsMoving, formación pointsFormation.
+            // Bonus x1.5 por cercanía SOLO en la ruta de kill (ScoreManager.Add queda intacto,
+            // así el +1000 del challenging no se multiplica).
             int pts = State == EnemyState.Diving || State == EnemyState.FlyThrough ? pointsMoving : pointsFormation;
+            pts = ScoreRules.ApplyProximity(pts, DistanceToPlayer(), ScoreRules.NearRadius);
             scoreManager?.Add(pts);
             if (audioSource != null && explosionClip != null)
             {
@@ -352,6 +360,16 @@ namespace V2
             }
             gameFlow?.OnEnemyKilled(this); // libera el slot (hueco) y avisa al conteo de grilla
             gameObject.SetActive(false); // slot queda como hueco (no se rellena en la misma ola)
+        }
+
+        /// <summary>
+        /// Distancia centro-a-centro al player en el instante de la muerte; +∞ si no hay player
+        /// (así el bonus de cercanía nunca se regala sin jugador).
+        /// </summary>
+        private float DistanceToPlayer()
+        {
+            Transform target = PlayerTransform;
+            return target != null ? Vector2.Distance(transform.position, target.position) : float.PositiveInfinity;
         }
 
         private void UpdateHitFlash()

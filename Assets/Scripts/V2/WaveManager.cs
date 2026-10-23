@@ -6,30 +6,23 @@ using UnityEngine;
 namespace V2
 {
     /// <summary>
-    /// Olas infinitas: entrada escalonada (1 enemigo cada spawnInterval, fila por fila),
-    /// cooldown de picadas nivel 1 fijo (5-8s, tunable) con 1-2 buzos por ciclo, y ola
-    /// siguiente automática al quedar la grilla vacía (gap waveGap). Nivel 1 fijo: sin escalado.
+    /// Olas infinitas: entrada escalonada (1 enemigo cada SpawnInterval de Difficulty, fila por
+    /// fila), picadas dirigidas al player y ola siguiente automática al quedar la grilla vacía
+    /// (gap waveGap). La amenaza (cooldowns, divers, velocidad, spawn) sale de
+    /// Difficulty.ForLevel(CurrentLevel) en cada ciclo; el challenging no escala.
     /// </summary>
     public class WaveManager : MonoBehaviour
     {
         [SerializeField] private FormationManager formation;
         [SerializeField] private ChallengingStage challenging;
         [SerializeField] private Transform enemyParent;
-        [SerializeField] private Transform player; // x del jugador para la fase 1 de la picada
+        [SerializeField] private Transform player; // x/y del jugador al iniciar la picada
         [SerializeField] private Vector2 spawnPoint = new(0f, 6f); // arriba del viewport (cámara ortho 9.6)
 
-        // Timing de entrada (patrón curvo del pack)
-        [SerializeField] private float spawnInterval = 0.35f;
+        // Timing de entrada
         [SerializeField] private float waveGap = 1.5f;
 
-        // Cooldown picadas — nivel 1 fijo (tunable)
-        [SerializeField] private float diveCooldownMin = 5f;
-        [SerializeField] private float diveCooldownMax = 8f;
-        [SerializeField] private int maxDiversAtOnce = 2;
-
-        // Tractor (M2): desde nivel 3, 1 Boss por ciclo cada 10-14 s.
-        [SerializeField] private float tractorCooldownMin = 10f;
-        [SerializeField] private float tractorCooldownMax = 14f;
+        // Tractor (M2): desde nivel 3, 1 Boss por ciclo; cooldown escalado por Difficulty.
         [SerializeField] private int tractorMinLevel = 3;
 
         private Coroutine waveLoop;
@@ -145,24 +138,28 @@ namespace V2
         }
 
         /// <summary>
-        /// Prepara la ola (Slots asignados) y activa 1 enemigo cada spawnInterval, fila por fila.
+        /// Prepara la ola (Slots asignados) y activa 1 enemigo cada SpawnInterval, fila por fila.
+        /// El multiplicador de picada se aplica en la activación, después de SpawnFormation
+        /// (que ya llamó ResetEnemy y restauró la velocidad base).
         /// </summary>
         private IEnumerator SpawnRoutine()
         {
             if (formation == null) yield break;
 
+            DifficultySettings d = Difficulty.ForLevel(CurrentLevel);
             List<Enemy> wave = formation.SpawnFormation(spawnPoint);
             foreach (Enemy e in wave)
             {
-                yield return new WaitForSeconds(spawnInterval);
+                yield return new WaitForSeconds(d.SpawnInterval);
                 if (e == null) continue;
+                e.SetDiveSpeedMul(d.DiveSpeedMul);
                 e.gameObject.SetActive(true);
                 e.BeginEntry(); // re-setea el timer de la curva (el GO estuvo inactivo)
             }
         }
 
         /// <summary>
-        /// Timer aleatorio 5-8s → PickDiver × maxDiversAtOnce (1-2 enemigos en Diving).
+        /// Timer aleatorio de Difficulty (nivel 1: 5-8 s) → PickDiver × MaxDivers.
         /// En challenging no hay picadas. Si la grilla está en entrada/vacía, PickDiver
         /// devuelve null y el ciclo sigue.
         /// </summary>
@@ -170,11 +167,12 @@ namespace V2
         {
             while (wavesActive)
             {
-                yield return new WaitForSeconds(UnityEngine.Random.Range(diveCooldownMin, diveCooldownMax));
+                DifficultySettings d = Difficulty.ForLevel(CurrentLevel);
+                yield return new WaitForSeconds(UnityEngine.Random.Range(d.DiveCooldownMin, d.DiveCooldownMax));
                 if (!wavesActive) yield break;
                 if (IsChallenging) continue;
 
-                for (int i = 0; i < maxDiversAtOnce; i++)
+                for (int i = 0; i < d.MaxDivers; i++)
                 {
                     Enemy diver = formation != null ? formation.PickDiver() : null;
                     if (diver == null) break;
@@ -188,14 +186,15 @@ namespace V2
         }
 
         /// <summary>
-        /// Timer 10-14 s → un Boss en Formation arranca el tractor. Sólo nivel ≥3 y nunca
-        /// durante el challenging ni con la grilla vacía (PickTractorBoss devuelve null).
+        /// Timer de Difficulty (nivel 3: 10-14 s) → un Boss en Formation arranca el tractor.
+        /// Sólo nivel ≥3 y nunca durante el challenging ni con la grilla vacía.
         /// </summary>
         private IEnumerator TractorScheduler()
         {
             while (wavesActive)
             {
-                yield return new WaitForSeconds(UnityEngine.Random.Range(tractorCooldownMin, tractorCooldownMax));
+                DifficultySettings d = Difficulty.ForLevel(CurrentLevel);
+                yield return new WaitForSeconds(UnityEngine.Random.Range(d.TractorCooldownMin, d.TractorCooldownMax));
                 if (!wavesActive) yield break;
                 if (IsChallenging) continue;
                 if (CurrentLevel < tractorMinLevel) continue;

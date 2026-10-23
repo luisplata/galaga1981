@@ -59,6 +59,12 @@ namespace V2.Tests
         }
 
         [Test]
+        public void ForLevel_100_IdenticalToLevel20()
+        {
+            AssertSame(Difficulty.ForLevel(20), Difficulty.ForLevel(100));
+        }
+
+        [Test]
         public void ForLevel_0_TreatedAsLevel1()
         {
             AssertSame(Difficulty.ForLevel(1), Difficulty.ForLevel(0));
