@@ -165,6 +165,20 @@ namespace V2
         }
 
         /// <summary>
+        /// Saca la instancia de juego sin puntaje ni notificaciones: Dead + GO inactivo.
+        /// Se usa para carriers descartados (segunda captura) y flyers cancelados, así el
+        /// pool (que exige Dead) puede reutilizarlos en la próxima ola/stage.
+        /// </summary>
+        public void Discard()
+        {
+            if (State == EnemyState.Dead) return;
+            Beam?.Cut();
+            ReleaseHeldShip();
+            State = EnemyState.Dead;
+            gameObject.SetActive(false);
+        }
+
+        /// <summary>
         /// Inicia el cruce del challenging: bezier cuadratica start -> control -> end durante
         /// flyDuration. Al salir del viewport muere como escapado (sin puntaje).
         /// </summary>
@@ -184,7 +198,6 @@ namespace V2
             transform.position = start;
             State = EnemyState.FlyThrough;
         }
-
 
         private void Update()
         {
@@ -262,6 +275,15 @@ namespace V2
 
         private void Die(Bullet bullet)
         {
+            // Dos balas del volley dual pueden impactar el mismo enemigo en el MISMO physics
+            // step: sólo el primer impacto resuelve la muerte (puntaje/audio/rescate). El
+            // segundo consume su bala y sale, para no duplicar Add ni los efectos.
+            if (State == EnemyState.Dead)
+            {
+                if (bullet != null) Destroy(bullet.gameObject);
+                return;
+            }
+
             hp--;
             // La bala se consume en CADA impacto (fix sobre el design: sin esto el Boss
             // recibiría 2+ hits en el mismo frame porque la bala seguiría overlapando).

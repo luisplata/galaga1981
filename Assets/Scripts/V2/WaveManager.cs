@@ -16,7 +16,7 @@ namespace V2
         [SerializeField] private ChallengingStage challenging;
         [SerializeField] private Transform enemyParent;
         [SerializeField] private Transform player; // x del jugador para la fase 1 de la picada
-        [SerializeField] private Vector2 spawnPoint = new(0f, 6f); // arriba del viewport (cámara 4.8)
+        [SerializeField] private Vector2 spawnPoint = new(0f, 6f); // arriba del viewport (cámara ortho 9.6)
 
         // Timing de entrada (patrón curvo del pack)
         [SerializeField] private float spawnInterval = 0.35f;

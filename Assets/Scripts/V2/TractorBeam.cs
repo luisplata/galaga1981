@@ -60,13 +60,15 @@ namespace V2
             beaming = false;
             SetRenderer(true);
 
-            // Telegraph: alpha pulsante, sin captura.
+            // Telegraph: alpha pulsante, sin captura. La geometría se recalcula igual que en
+            // la fase activa para que el cono telegrafiado sea el que va a capturar.
             float t = 0f;
             while (t < telegraphDuration)
             {
                 float pulse = Mathf.Lerp(TelegraphAlphaMin, TelegraphAlphaMax,
                     Mathf.PingPong(Time.time * 6f, 1f));
                 SetAlpha(pulse);
+                UpdateGeometry();
                 t += Time.deltaTime;
                 yield return null;
             }

@@ -186,7 +186,11 @@ namespace V2
         {
             for (int i = 0; i < active.Count; i++)
             {
-                if (active[i] != null) active[i].gameObject.SetActive(false);
+                Enemy e = active[i];
+                if (e == null) continue;
+                // Dead (no FlyThrough) para que GetFromPool pueda reciclarlo: si queda en
+                // vuelo pero inactivo, el stage pierde hasta 24 instancias por cancel/restart.
+                e.Discard();
             }
             active.Clear();
         }

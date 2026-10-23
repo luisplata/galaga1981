@@ -69,7 +69,8 @@ namespace V2
             }
             if (currentCarrier != null)
             {
-                currentCarrier.ReleaseHeldShip();
+                // Restart limpio: el carrier viejo no puede quedar estacionado y matable.
+                currentCarrier.Discard();
                 currentCarrier = null;
             }
             autofire?.SetDual(false);
@@ -104,7 +105,9 @@ namespace V2
             // A lo sumo una nave retenida: si ya había otro carrier, se descarta.
             if (currentCarrier != null && currentCarrier != carrier)
             {
-                currentCarrier.ReleaseHeldShip();
+                // El anterior no queda inerte ni superpuesto: Dead + inactivo (el pool lo
+                // recicla en la próxima ola). No puntúa ni bloquea el cierre de la ola.
+                currentCarrier.Discard();
             }
             currentCarrier = carrier;
 
@@ -152,7 +155,6 @@ namespace V2
             if (inputDrag != null) inputDrag.enabled = playing;
             if (autofire != null) autofire.SetFireEnabled(playing);
         }
-    
 
         private void UpdateLevelText()
         {
