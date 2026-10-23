@@ -1,0 +1,28 @@
+name: perms probe
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: probe
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          echo "== actor: ${{ github.actor }} / triggering: ${{ github.triggering_actor }} / event: ${{ github.event_name }} =="
+          echo "== repo perms del token =="
+          gh api /repos/${{ github.repository }} --jq '.permissions' || true
+          echo "== intento crear release de prueba =="
+          OUT=$(gh api -X POST /repos/${{ github.repository }}/releases -f tag_name=probe-${{ github.run_id }} -f name=probe 2>&1)
+          echo "$OUT" | head -c 400
+          ID=$(echo "$OUT" | python3 -c "import sys,json;print(json.load(sys.stdin).get('id',''))" 2>/dev/null)
+          echo ""
+          echo "probe_release_id=$ID"
+          if [ -n "$ID" ]; then
+            gh api -X DELETE /repos/${{ github.repository }}/releases/$ID && echo "release borrado"
+            gh api -X DELETE /repos/${{ github.repository }}/git/refs/tags/probe-${{ github.run_id }} && echo "tag borrado"
+          fi
