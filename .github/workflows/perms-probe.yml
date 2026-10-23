@@ -13,16 +13,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set +e
-          echo "== actor: ${{ github.actor }} / triggering: ${{ github.triggering_actor }} / event: ${{ github.event_name }} =="
-          echo "== repo perms del token =="
-          gh api /repos/${{ github.repository }} --jq '.permissions' || true
-          echo "== intento crear release de prueba =="
-          OUT=$(gh api -X POST /repos/${{ github.repository }}/releases -f tag_name=probe-${{ github.run_id }} -f name=probe 2>&1)
-          echo "$OUT" | head -c 400
-          ID=$(echo "$OUT" | python3 -c "import sys,json;print(json.load(sys.stdin).get('id',''))" 2>/dev/null)
+          echo "== intento EXACTO de release v1.1.0 =="
+          gh api -X POST /repos/${{ github.repository }}/releases \
+            -f tag_name=v1.1.0 \
+            -f target_commitish=1a2a5b07be465ae8ef18f9cda03dcba26d033766 \
+            -f name="Galaga1981 v1.1.0" \
+            -F generate_release_notes=true 2>&1 | head -c 500
           echo ""
-          echo "probe_release_id=$ID"
-          if [ -n "$ID" ]; then
-            gh api -X DELETE /repos/${{ github.repository }}/releases/$ID && echo "release borrado"
-            gh api -X DELETE /repos/${{ github.repository }}/git/refs/tags/probe-${{ github.run_id }} && echo "tag borrado"
-          fi
+          echo "== releases actuales =="
+          gh api /repos/${{ github.repository }}/releases --jq '.[]|{tag_name,id}' | head -5
