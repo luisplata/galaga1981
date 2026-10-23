@@ -56,7 +56,9 @@ namespace V2
         private float enterTime;
         private float enterStartY;
         private float divePlayerX;
+        private float currentDiveTargetY;
         private bool divingDown;
+        private bool hasHitPlayerThisDive;
         private float hitFlashTimer;
         private float flyTime;
         private float flyTotal;
@@ -107,15 +109,23 @@ namespace V2
             enterTime = Time.time;
         }
 
-        /// <summary>
-        /// Inicia la picada de 2 fases rectas hacia (playerX, diveTargetY) y retorno al slot.
-        /// Solo desde Formation.
-        /// </summary>
+        /// <summary>Picada hacia la X del jugador con la Y por defecto del prefab.</summary>
         public void StartDive(float playerX)
+        {
+            StartDive(playerX, diveTargetY);
+        }
+
+        /// <summary>
+        /// Inicia la picada de 2 fases rectas hacia (playerX, targetY) y retorno al slot.
+        /// X e Y se congelan al iniciar (telegraph). Sólo desde Formation.
+        /// </summary>
+        public void StartDive(float playerX, float targetY)
         {
             if (State != EnemyState.Formation || IsCarrier) return;
             divePlayerX = playerX;
+            currentDiveTargetY = targetY;
             divingDown = true;
+            hasHitPlayerThisDive = false;
             State = EnemyState.Diving;
         }
 
@@ -127,6 +137,8 @@ namespace V2
         {
             hp = initialHp;
             hitFlashTimer = 0f;
+            hasHitPlayerThisDive = false;
+            divingDown = false;
             if (spriteRenderer != null) spriteRenderer.color = Color.white;
             Beam?.Cut();
             ReleaseHeldShip();
@@ -149,6 +161,10 @@ namespace V2
         public void OnBeamHitPlayer()
         {
             if (State != EnemyState.Formation || IsCarrier) return;
+
+            // i-frames: consultar ANTES de estacionar el carrier. Si no, quedaría un Boss
+            // parked con la nave retenida sin captura consumida.
+            if (gameFlow == null || !gameFlow.CanTakeDamage) return;
 
             IsCarrier = true;
             transform.position = new Vector3(carrierHold.x, carrierHold.y, 0f);
@@ -232,8 +248,8 @@ namespace V2
         {
             if (divingDown)
             {
-                // Fase 1: recta hacia la zona del jugador (sin interacción en M1)
-                Vector2 target = new Vector2(divePlayerX, diveTargetY);
+                // Fase 1: recta hacia la posición congelada del jugador al iniciar la picada.
+                Vector2 target = new Vector2(divePlayerX, currentDiveTargetY);
                 transform.position = Vector2.MoveTowards(transform.position, target, diveSpeed * Time.deltaTime);
                 if (Vector2.Distance(transform.position, target) <= arrivalDistance)
                 {
@@ -251,6 +267,26 @@ namespace V2
                     State = EnemyState.Formation;
                 }
             }
+
+            // Ida y vuelta dañan. Una picada pega como máximo una vez.
+            TryHitPlayer();
+        }
+
+        /// <summary>
+        /// Impacto matemático contra el player (sin física): radio 0.5 inclusivo.
+        /// El enemigo NO muere ni corta la picada; completa el retorno al slot.
+        /// </summary>
+        private void TryHitPlayer()
+        {
+            if (hasHitPlayerThisDive) return;
+            if (gameFlow == null || !gameFlow.CanTakeDamage) return;
+
+            Transform target = PlayerTransform;
+            if (target == null) return;
+
+            if (!HitMath.WithinSquared(transform.position, target.position, HitMath.PlayerHitRadius)) return;
+
+            if (gameFlow.OnPlayerHit(this)) hasHitPlayerThisDive = true;
         }
 
         private void UpdateFlyThrough()

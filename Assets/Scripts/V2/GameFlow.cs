@@ -6,9 +6,8 @@ namespace V2
 {
     /// <summary>
     /// Flujo de estados Home -> Playing -> GameOver con UN solo panel visible por estado.
-    /// M1: StartGame lanza olas infinitas (WaveManager); matar enemigos ya NO termina la
-    /// partida (el kill notifica a WaveManager para el conteo de la grilla). GameOver queda
-    /// como estado sin disparo automático — M3 lo conecta con vidas.
+    /// M3: 3 vidas, daño por picada/captura, i-frames, GameOver real, limpieza total y retry
+    /// limpio. GameFlow es el único dueño de las vidas (RunState) y del estado de la run.
     /// </summary>
     public class GameFlow : MonoBehaviour
     {
@@ -28,18 +27,30 @@ namespace V2
         [SerializeField] private string gameOverScorePrefix = "PUNTOS: ";
         [SerializeField] private TMP_Text levelText;
         [SerializeField] private string levelPrefix = "NIVEL ";
+        [SerializeField] private TMP_Text livesText;
+        [SerializeField] private string livesPrefix = "VIDAS ";
         [SerializeField] private ScoreManager scoreManager;
         [SerializeField] private PlayerController player;
         [SerializeField] private WaveManager waveManager;
         [SerializeField] private InputDrag inputDrag;
         [SerializeField] private Autofire autofire;
-        [SerializeField] private float respawnDelay = 1.2f; // tunable: M3 lo reemplaza por vidas
+        [SerializeField] private float respawnDelay = 1.2f;      // captura (M2)
+        [SerializeField] private float bodyHitDelay = 1.0f;      // impacto de picada
+        [SerializeField] private float invulnerabilitySeconds = 1.5f;
 
+        private readonly RunState runState = new();
         private Enemy currentCarrier;
         private Coroutine respawnRoutine;
+        private float invulnerableUntil;
 
         /// <summary>Transform del jugador para el tractor (Enemy.PlayerTransform).</summary>
         public Transform PlayerTransform => player != null ? player.transform : null;
+
+        /// <summary>Vidas restantes de la run (HUD y verificación).</summary>
+        public int Lives => runState.Lives;
+
+        /// <summary>Predicado único de daño: Playing y fuera de la ventana de i-frames.</summary>
+        public bool CanTakeDamage => CurrentState == State.Playing && Time.time >= invulnerableUntil;
 
         private void Start()
         {
@@ -57,26 +68,38 @@ namespace V2
             UpdateLevelText(level);
         }
 
+        /// <summary>
+        /// Start / REVANCHA: deja la run limpia (8 invariantes del retry) y arranca las olas.
+        /// </summary>
         public void StartGame()
         {
-            scoreManager?.ResetScore();
-
-            // Run limpia: sin respawn pendiente, sin carrier y sin dual.
             if (respawnRoutine != null)
             {
                 StopCoroutine(respawnRoutine);
                 respawnRoutine = null;
             }
+
+            runState.Reset();
+            invulnerableUntil = 0f;
+
             if (currentCarrier != null)
             {
                 // Restart limpio: el carrier viejo no puede quedar estacionado y matable.
                 currentCarrier.Discard();
                 currentCarrier = null;
             }
+
+            // Limpieza total antes de reconstruir: formación (pool completo), challenging,
+            // schedulers y balas en vuelo. StartWaves repite StopWaves (idempotente).
+            waveManager?.StopWaves();
+            autofire?.ClearBullets();
             autofire?.SetDual(false);
+
             player?.ResetForRun();
+            scoreManager?.ResetScore();
 
             waveManager?.StartWaves();
+            UpdateLivesText();
             UpdateLevelText();
             SetState(State.Playing);
         }
@@ -95,25 +118,89 @@ namespace V2
         }
 
         /// <summary>
-        /// Un Boss capturó al jugador. NUNCA dispara GameOver: apaga fuego, pierde dual,
-        /// esconde la nave y programa el respawn simple (1.2 s).
+        /// Impacto de picada (Enemy.UpdateDiving). Devuelve true si el golpe se aceptó.
+        /// Fija la invulnerabilidad ANTES de mutar nada: un segundo diver en el mismo frame
+        /// ve CanTakeDamage == false y no consume vida. Al llegar a 0 dispara GameOver.
+        /// </summary>
+        public bool OnPlayerHit(Enemy source)
+        {
+            if (!CanTakeDamage) return false;
+
+            invulnerableUntil = Time.time + bodyHitDelay + invulnerabilitySeconds;
+
+            autofire?.SetDual(false); // toda muerte pierde el dual (las balas en vuelo siguen)
+            runState.TryLoseLife();
+            UpdateLivesText();
+
+            if (runState.IsDead)
+            {
+                TriggerGameOver();
+                return true;
+            }
+
+            StartHitRoutine(bodyHitDelay);
+            return true;
+        }
+
+        private void StartHitRoutine(float delay)
+        {
+            if (respawnRoutine != null) StopCoroutine(respawnRoutine);
+            respawnRoutine = StartCoroutine(HitRoutine(delay));
+        }
+
+        /// <summary>Death delay: nave oculta, input y autofire off; al volver, blink de i-frames.</summary>
+        private IEnumerator HitRoutine(float delay)
+        {
+            if (inputDrag != null) inputDrag.enabled = false;
+            if (autofire != null) autofire.SetFireEnabled(false);
+            player?.Capture();
+
+            yield return new WaitForSeconds(delay);
+
+            respawnRoutine = null;
+            if (CurrentState != State.Playing) yield break;
+
+            player?.Respawn();
+            player?.BeginInvulnerable(invulnerabilitySeconds);
+            if (inputDrag != null) inputDrag.enabled = true;
+            if (autofire != null) autofire.SetFireEnabled(true);
+        }
+
+        /// <summary>
+        /// Un Boss capturó al jugador: -1 vida. Con vidas restantes conserva el flujo M2
+        /// (nave retenida + respawn 1.2 s); con 1 vida descarta carrier/nave y entra GameOver.
+        /// Una captura durante i-frames no se consume (Enemy ya no estaciona el carrier).
         /// </summary>
         public void OnPlayerCaptured(Enemy carrier)
         {
-            if (CurrentState != State.Playing) return;
+            if (!CanTakeDamage) return;
+
+            invulnerableUntil = Time.time + respawnDelay + invulnerabilitySeconds;
+            autofire?.SetDual(false);
+
+            runState.TryLoseLife();
+            UpdateLivesText();
+
+            if (runState.IsDead)
+            {
+                // 1 vida -> 0: no hay respawn ni nave retenida; carrier descartado y GameOver.
+                if (carrier != null) carrier.Discard();
+                if (currentCarrier != null && currentCarrier != carrier) currentCarrier.Discard();
+                currentCarrier = null;
+                TriggerGameOver();
+                return;
+            }
 
             // A lo sumo una nave retenida: si ya había otro carrier, se descarta.
             if (currentCarrier != null && currentCarrier != carrier)
             {
-                // El anterior no queda inerte ni superpuesto: Dead + inactivo (el pool lo
-                // recicla en la próxima ola). No puntúa ni bloquea el cierre de la ola.
                 currentCarrier.Discard();
             }
             currentCarrier = carrier;
 
             waveManager?.OnPlayerCaptured(carrier);
-            autofire?.SetDual(false);
             if (autofire != null) autofire.SetFireEnabled(false);
+            if (inputDrag != null) inputDrag.enabled = false;
             player?.Capture();
 
             if (respawnRoutine != null) StopCoroutine(respawnRoutine);
@@ -121,10 +208,12 @@ namespace V2
         }
 
         /// <summary>
-        /// El carrier murió: rescate → Dual Fighter. Sólo si era el carrier vigente.
+        /// El carrier murió: rescate → Dual Fighter. Sólo si era el carrier vigente y la run
+        /// sigue en Playing (no se regala dual desde GameOver).
         /// </summary>
         public void OnCarrierDestroyed(Enemy carrier)
         {
+            if (CurrentState != State.Playing) return;
             if (currentCarrier != carrier) return;
             currentCarrier = null;
             autofire?.SetDual(true);
@@ -134,8 +223,45 @@ namespace V2
         {
             yield return new WaitForSeconds(respawnDelay);
             respawnRoutine = null;
+            if (CurrentState != State.Playing) yield break;
+
             player?.Respawn();
-            if (autofire != null) autofire.SetFireEnabled(CurrentState == State.Playing);
+            player?.BeginInvulnerable(invulnerabilitySeconds);
+            if (inputDrag != null) inputDrag.enabled = true;
+            if (autofire != null) autofire.SetFireEnabled(true);
+        }
+
+        /// <summary>
+        /// GameOver terminal. Idempotente: la primera línea corta la re-entrada y fija la
+        /// invulnerabilidad en +∞. Limpia olas/formación/challenging, balas, dual y nave;
+        /// SetState(GameOver) va ÚLTIMO (es el que apaga input/fire y escribe el score).
+        /// </summary>
+        public void TriggerGameOver()
+        {
+            if (CurrentState == State.GameOver) return;
+
+            invulnerableUntil = float.PositiveInfinity;
+
+            if (respawnRoutine != null)
+            {
+                StopCoroutine(respawnRoutine);
+                respawnRoutine = null;
+            }
+
+            if (currentCarrier != null)
+            {
+                currentCarrier.Discard();
+                currentCarrier = null;
+            }
+
+            if (inputDrag != null) inputDrag.enabled = false;
+            waveManager?.StopWaves();
+            autofire?.ClearBullets();
+            autofire?.SetDual(false);
+            if (autofire != null) autofire.SetFireEnabled(false);
+            player?.HideForGameOver();
+
+            SetState(State.GameOver);
         }
 
         private void SetState(State newState)
@@ -156,6 +282,11 @@ namespace V2
             if (autofire != null) autofire.SetFireEnabled(playing);
         }
 
+        private void UpdateLivesText()
+        {
+            if (livesText != null) livesText.text = livesPrefix + runState.Lives;
+        }
+
         private void UpdateLevelText()
         {
             if (waveManager != null) UpdateLevelText(waveManager.CurrentLevel);
@@ -165,5 +296,5 @@ namespace V2
         {
             if (levelText != null) levelText.text = levelPrefix + level;
         }
-}
+    }
 }

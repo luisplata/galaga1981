@@ -33,6 +33,7 @@ namespace V2
         [SerializeField] private int tractorMinLevel = 3;
 
         private Coroutine waveLoop;
+        private Coroutine spawnRoutine;
         private Coroutine diveScheduler;
         private Coroutine tractorScheduler;
         private bool wavesActive;
@@ -59,13 +60,21 @@ namespace V2
             tractorScheduler = StartCoroutine(TractorScheduler());
         }
 
+        /// <summary>
+        /// Detiene TODO y deja el mundo limpio (GameOver / retry). Orden estricto:
+        /// 1) cierra el gate, 2) cancela las coroutines (incluida SpawnRoutine, que corre
+        /// aparte de WaveLoop y podría reactivar enemigos ya descartados), 3) challenging
+        /// (pool propio), 4) formación (pool completo, sin evento: no debe disparar una ola).
+        /// </summary>
         public void StopWaves()
         {
             wavesActive = false;
-            challenging?.Cancel();
+            if (spawnRoutine != null) { StopCoroutine(spawnRoutine); spawnRoutine = null; }
             if (waveLoop != null) { StopCoroutine(waveLoop); waveLoop = null; }
             if (diveScheduler != null) { StopCoroutine(diveScheduler); diveScheduler = null; }
             if (tractorScheduler != null) { StopCoroutine(tractorScheduler); tractorScheduler = null; }
+            challenging?.Cancel();
+            formation?.ClearAll();
         }
 
         /// <summary>
@@ -115,7 +124,9 @@ namespace V2
                 }
                 else
                 {
-                    yield return StartCoroutine(SpawnRoutine());
+                    spawnRoutine = StartCoroutine(SpawnRoutine());
+                    yield return spawnRoutine;
+                    spawnRoutine = null;
 
                     // Espera la limpieza de la grilla (AliveCount llega a 0 vía NotifyKilled).
                     while (wavesActive && formation != null && formation.AliveCount > 0)
@@ -167,7 +178,11 @@ namespace V2
                 {
                     Enemy diver = formation != null ? formation.PickDiver() : null;
                     if (diver == null) break;
-                    diver.StartDive(player != null ? player.position.x : 0f);
+                    // X e Y del player congeladas al iniciar (telegraph): con X-only el dive
+                    // paraba en y=-6 y nunca entraba al radio letal de 0.5 con el player en -7.5.
+                    float targetX = player != null ? player.position.x : 0f;
+                    float targetY = player != null ? player.position.y : -6f;
+                    diver.StartDive(targetX, targetY);
                 }
             }
         }

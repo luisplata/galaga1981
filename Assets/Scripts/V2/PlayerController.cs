@@ -5,6 +5,7 @@ namespace V2
     /// <summary>
     /// Movimiento relativo 1:1: x = shipStartWorld.x + dragDeltaWorld.x.
     /// El offset vertical queda fijo (el dedo nunca tapa la nave) y sin inercia al soltar.
+    /// M3: blink de i-frames por contador (sin coroutine) sobre la visibilidad del sprite.
     /// </summary>
     public class PlayerController : MonoBehaviour
     {
@@ -12,6 +13,7 @@ namespace V2
         [SerializeField] private float maxX = 4.8f;
         [SerializeField] private float fixedY = -7.5f;
         [SerializeField] private float resetX = 0f;
+        [SerializeField] private float blinkInterval = 0.06f; // ~8.3 Hz (tunable)
         [SerializeField] private InputDrag inputDrag;
         [SerializeField] private Camera gameCamera;
         [SerializeField] private SpriteRenderer spriteRenderer;
@@ -20,6 +22,11 @@ namespace V2
         private Vector3 shipStartWorld;
         private bool dragging;
         private bool captured;
+
+        private bool visible = true;
+        private bool blinkOn = true;
+        private float blinkUntil;
+        private float nextBlink;
 
         private void Awake()
         {
@@ -60,6 +67,9 @@ namespace V2
 
         private void Update()
         {
+            // El blink corre aun sin arrastre; sólo toca el renderer/collider.
+            TickBlink();
+
             if (captured || !dragging || inputDrag == null) return;
 
             Camera cam = gameCamera != null ? gameCamera : Camera.main;
@@ -79,15 +89,25 @@ namespace V2
             transform.position = new Vector3(resetX, fixedY, 0f);
         }
 
+        /// <summary>Arranca el parpadeo de i-frames (se llama al respawnear).</summary>
+        public void BeginInvulnerable(float seconds)
+        {
+            blinkUntil = Time.time + Mathf.Max(0f, seconds);
+            nextBlink = Time.time + blinkInterval;
+            blinkOn = true;
+            Apply();
+        }
+
         /// <summary>Captura: la nave desaparece y el arrastre queda bloqueado hasta el respawn.</summary>
         public void Capture()
         {
+            CancelBlink();
             captured = true;
             dragging = false;
             SetVisible(false);
         }
 
-        /// <summary>Respawn tras la captura: vuelve al centro visible y habilitado.</summary>
+        /// <summary>Respawn tras la captura/impacto: vuelve al centro visible y habilitado.</summary>
         public void Respawn()
         {
             ResetPosition();
@@ -95,18 +115,60 @@ namespace V2
             SetVisible(true);
         }
 
-        /// <summary>Reset de run (StartGame): posición inicial y nave visible.</summary>
+        /// <summary>Reset de run (StartGame): posición inicial, nave visible y blink cancelado.</summary>
         public void ResetForRun()
         {
+            CancelBlink();
             ResetPosition();
             captured = false;
             dragging = false;
             SetVisible(true);
         }
 
-        private void SetVisible(bool visible)
+        /// <summary>GameOver: nave oculta con estado definido (sin blink colgado).</summary>
+        public void HideForGameOver()
         {
-            if (spriteRenderer != null) spriteRenderer.enabled = visible;
+            CancelBlink();
+            captured = true;
+            dragging = false;
+            SetVisible(false);
+        }
+
+        public void SetVisible(bool value)
+        {
+            visible = value;
+            Apply();
+        }
+
+        private void TickBlink()
+        {
+            if (blinkUntil <= 0f) return;
+
+            if (Time.time >= blinkUntil)
+            {
+                blinkUntil = 0f;
+                blinkOn = true;
+                Apply();
+                return;
+            }
+
+            if (Time.time >= nextBlink)
+            {
+                blinkOn = !blinkOn;
+                nextBlink = Time.time + blinkInterval;
+                Apply();
+            }
+        }
+
+        private void CancelBlink()
+        {
+            blinkUntil = 0f;
+            blinkOn = true;
+        }
+
+        private void Apply()
+        {
+            if (spriteRenderer != null) spriteRenderer.enabled = visible && blinkOn;
             if (bodyCollider != null) bodyCollider.enabled = visible;
         }
     }

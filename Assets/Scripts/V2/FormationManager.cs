@@ -75,6 +75,23 @@ namespace V2
         }
 
         /// <summary>
+        /// Limpieza total (GameOver / retry): recorre el POOL completo, no `active`.
+        /// SpawnFormation hace active.Clear() y sólo el pool conserva los huérfanos de olas
+        /// anteriores; iterar `active` dejaría justo el bug de retry sucio.
+        /// NO emite OnFormationCleared (dispararía una ola nueva con las olas ya detenidas).
+        /// </summary>
+        public void ClearAll()
+        {
+            for (int i = 0; i < pool.Count; i++)
+            {
+                Enemy e = pool[i];
+                if (e != null) e.Discard();
+            }
+            active.Clear();
+            AliveCount = 0;
+        }
+
+        /// <summary>
         /// Un enemigo murió: baja el contador; si la grilla queda vacía → OnFormationCleared
         /// (WaveManager lanza la siguiente ola). El slot muerto queda como hueco.
         /// Guard con Remove: el carrier ya salió del conteo y su kill NO debe restar dos veces.

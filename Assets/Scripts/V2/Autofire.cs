@@ -42,6 +42,21 @@ namespace V2
             IsDual = value;
         }
 
+        /// <summary>
+        /// Destruye las balas propias en vuelo (GameOver / retry limpio) y reinicia el timer.
+        /// No toca el toggle de fuego ni el dual.
+        /// </summary>
+        public void ClearBullets()
+        {
+            for (int i = 0; i < activeBullets.Count; i++)
+            {
+                Bullet bullet = activeBullets[i];
+                if (bullet != null) Destroy(bullet.gameObject);
+            }
+            activeBullets.Clear();
+            timer = 0f;
+        }
+
         private void Update()
         {
             if (!fireEnabled) return;
