@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace V2
     public class WaveManager : MonoBehaviour
     {
         [SerializeField] private FormationManager formation;
+        [SerializeField] private ChallengingStage challenging;
         [SerializeField] private Transform enemyParent;
         [SerializeField] private Transform player; // x del jugador para la fase 1 de la picada
         [SerializeField] private Vector2 spawnPoint = new(0f, 6f); // arriba del viewport (cámara 4.8)
@@ -38,6 +40,12 @@ namespace V2
         /// <summary>Nivel actual (arranca en 1 y lo resetea StartWaves).</summary>
         public int CurrentLevel { get; private set; } = 1;
 
+        /// <summary>Se emite después de cada CurrentLevel++ (HUD de nivel).</summary>
+        public event Action<int> LevelChanged;
+
+        /// <summary>Stage bonus en curso: no hay grilla, picadas ni tractor.</summary>
+        public bool IsChallenging => challenging != null && challenging.IsRunning;
+
         /// <summary>
         /// Lanza el ciclo de olas infinitas, las picadas y el tractor (desde GameFlow.StartGame).
         /// </summary>
@@ -54,6 +62,7 @@ namespace V2
         public void StopWaves()
         {
             wavesActive = false;
+            challenging?.Cancel();
             if (waveLoop != null) { StopCoroutine(waveLoop); waveLoop = null; }
             if (diveScheduler != null) { StopCoroutine(diveScheduler); diveScheduler = null; }
             if (tractorScheduler != null) { StopCoroutine(tractorScheduler); tractorScheduler = null; }
@@ -63,9 +72,24 @@ namespace V2
         /// Un enemigo murió (vía GameFlow.OnEnemyKilled): baja el contador de la grilla.
         /// Si queda vacía, FormationManager emite OnFormationCleared → WaveLoop sigue.
         /// </summary>
+        /// <summary>
+        /// Un enemigo murió (vía GameFlow.OnEnemyKilled). En challenging cuenta para el stage;
+        /// en grilla baja AliveCount de la formación. Nunca ambos.
+        /// </summary>
         public void OnEnemyKilled(Enemy e)
         {
+            if (IsChallenging)
+            {
+                challenging.OnEnemyKilled(e);
+                return;
+            }
             if (formation != null) formation.NotifyKilled(e);
+        }
+
+        /// <summary>Un enemigo de challenging salió del viewport: no puntúa ni penaliza.</summary>
+        public void OnEnemyEscaped(Enemy e)
+        {
+            if (IsChallenging) challenging.OnEnemyEscaped(e);
         }
 
         /// <summary>
@@ -78,21 +102,34 @@ namespace V2
         }
 
         /// <summary>
-        /// Ola actual → esperar limpieza de grilla → gap → siguiente ola (loop ∞).
+        /// Stage actual → limpieza → gap → nivel+1 (LevelChanged). Múltiplo de 4 corre el
+        /// challenging en vez de la grilla; nunca ambos.
         /// </summary>
         private IEnumerator WaveLoop()
         {
             while (wavesActive)
             {
-                yield return StartCoroutine(SpawnRoutine());
-
-                // Espera la limpieza de la grilla (AliveCount llega a 0 vía NotifyKilled).
-                while (wavesActive && formation != null && formation.AliveCount > 0)
+                if (CurrentLevel % 4 == 0 && challenging != null)
                 {
-                    yield return null;
+                    yield return challenging.Run();
+                }
+                else
+                {
+                    yield return StartCoroutine(SpawnRoutine());
+
+                    // Espera la limpieza de la grilla (AliveCount llega a 0 vía NotifyKilled).
+                    while (wavesActive && formation != null && formation.AliveCount > 0)
+                    {
+                        yield return null;
+                    }
                 }
 
+                if (!wavesActive) yield break;
                 yield return new WaitForSeconds(waveGap);
+                if (!wavesActive) yield break;
+
+                CurrentLevel++;
+                LevelChanged?.Invoke(CurrentLevel);
             }
         }
 
@@ -115,14 +152,16 @@ namespace V2
 
         /// <summary>
         /// Timer aleatorio 5-8s → PickDiver × maxDiversAtOnce (1-2 enemigos en Diving).
-        /// Si la grilla está en entrada/vacía, PickDiver devuelve null y el ciclo sigue.
+        /// En challenging no hay picadas. Si la grilla está en entrada/vacía, PickDiver
+        /// devuelve null y el ciclo sigue.
         /// </summary>
         private IEnumerator DiveScheduler()
         {
             while (wavesActive)
             {
-                yield return new WaitForSeconds(Random.Range(diveCooldownMin, diveCooldownMax));
+                yield return new WaitForSeconds(UnityEngine.Random.Range(diveCooldownMin, diveCooldownMax));
                 if (!wavesActive) yield break;
+                if (IsChallenging) continue;
 
                 for (int i = 0; i < maxDiversAtOnce; i++)
                 {
@@ -135,14 +174,15 @@ namespace V2
 
         /// <summary>
         /// Timer 10-14 s → un Boss en Formation arranca el tractor. Sólo nivel ≥3 y nunca
-        /// con la grilla vacía (PickTractorBoss devuelve null y el ciclo sigue).
+        /// durante el challenging ni con la grilla vacía (PickTractorBoss devuelve null).
         /// </summary>
         private IEnumerator TractorScheduler()
         {
             while (wavesActive)
             {
-                yield return new WaitForSeconds(Random.Range(tractorCooldownMin, tractorCooldownMax));
+                yield return new WaitForSeconds(UnityEngine.Random.Range(tractorCooldownMin, tractorCooldownMax));
                 if (!wavesActive) yield break;
+                if (IsChallenging) continue;
                 if (CurrentLevel < tractorMinLevel) continue;
                 if (formation == null) continue;
 

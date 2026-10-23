@@ -26,6 +26,8 @@ namespace V2
         [SerializeField] private GameObject gameOverPanel;
         [SerializeField] private TMP_Text gameOverScoreText;
         [SerializeField] private string gameOverScorePrefix = "PUNTOS: ";
+        [SerializeField] private TMP_Text levelText;
+        [SerializeField] private string levelPrefix = "NIVEL ";
         [SerializeField] private ScoreManager scoreManager;
         [SerializeField] private PlayerController player;
         [SerializeField] private WaveManager waveManager;
@@ -41,7 +43,18 @@ namespace V2
 
         private void Start()
         {
+            if (waveManager != null) waveManager.LevelChanged += HandleLevelChanged;
             SetState(State.Home);
+        }
+
+        private void OnDestroy()
+        {
+            if (waveManager != null) waveManager.LevelChanged -= HandleLevelChanged;
+        }
+
+        private void HandleLevelChanged(int level)
+        {
+            UpdateLevelText(level);
         }
 
         public void StartGame()
@@ -63,14 +76,21 @@ namespace V2
             player?.ResetForRun();
 
             waveManager?.StartWaves();
+            UpdateLevelText();
             SetState(State.Playing);
         }
 
         public void OnEnemyKilled(Enemy killedEnemy)
         {
-            // M1: el kill ya no termina la partida — notifica a WaveManager para el conteo
-            // de la grilla (ola siguiente automática cuando queda vacía).
+            // M1/M2: el kill no termina la partida — WaveManager rutea al conteo de la
+            // grilla o al challenging (nunca ambos).
             waveManager?.OnEnemyKilled(killedEnemy);
+        }
+
+        /// <summary>Un enemigo de challenging cruzó el viewport (escape sin castigo).</summary>
+        public void OnEnemyEscaped(Enemy escapedEnemy)
+        {
+            waveManager?.OnEnemyEscaped(escapedEnemy);
         }
 
         /// <summary>
@@ -132,5 +152,16 @@ namespace V2
             if (inputDrag != null) inputDrag.enabled = playing;
             if (autofire != null) autofire.SetFireEnabled(playing);
         }
-    }
+    
+
+        private void UpdateLevelText()
+        {
+            if (waveManager != null) UpdateLevelText(waveManager.CurrentLevel);
+        }
+
+        private void UpdateLevelText(int level)
+        {
+            if (levelText != null) levelText.text = levelPrefix + level;
+        }
+}
 }

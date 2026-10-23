@@ -11,7 +11,7 @@ namespace V2
     /// Ciclo de estados M1: entra con curva (seno), queda en su slot,
     /// baja en picada hacia la zona del jugador y retorna. Al morir libera el slot.
     /// </summary>
-    public enum EnemyState { Entering, Formation, Diving, Dead }
+    public enum EnemyState { Entering, Formation, Diving, FlyThrough, Dead }
 
     /// <summary>
     /// Enemigo de formación M1. enum + switch (sin FSM por componente).
@@ -37,6 +37,9 @@ namespace V2
         [SerializeField] private float diveTargetY = -6f;   // zona del jugador (sin colisión en M1)
         [SerializeField] private float returnSpeed = 6f;
 
+        // FlyThrough (M2 challenging): cruce bezier de borde a borde, sin slot ni picada.
+        [SerializeField] private float flyDuration = 3f;
+
         // Refs serializadas
         [SerializeField] private ScoreManager scoreManager;
         [SerializeField] private GameFlow gameFlow; // wiring del kill: Enemy → GameFlow → WaveManager
@@ -55,6 +58,11 @@ namespace V2
         private float divePlayerX;
         private bool divingDown;
         private float hitFlashTimer;
+        private float flyTime;
+        private float flyTotal;
+        private Vector3 flyStart;
+        private Vector3 flyControl;
+        private Vector3 flyEnd;
 
         public EnemyState State { get; private set; }
         public EnemyType Type => type;
@@ -156,12 +164,35 @@ namespace V2
             IsCarrier = false;
         }
 
+        /// <summary>
+        /// Inicia el cruce del challenging: bezier cuadratica start -> control -> end durante
+        /// flyDuration. Al salir del viewport muere como escapado (sin puntaje).
+        /// </summary>
+        public void BeginFlyThrough(Vector3 start, Vector3 control, Vector3 end)
+        {
+            BeginFlyThrough(start, control, end, flyDuration);
+        }
+
+        /// <summary>Variante con duracion explicita (ChallengingStage tiene su propio tunable).</summary>
+        public void BeginFlyThrough(Vector3 start, Vector3 control, Vector3 end, float duration)
+        {
+            flyStart = start;
+            flyControl = control;
+            flyEnd = end;
+            flyTotal = Mathf.Max(0.1f, duration);
+            flyTime = Time.time;
+            transform.position = start;
+            State = EnemyState.FlyThrough;
+        }
+
+
         private void Update()
         {
             switch (State)
             {
                 case EnemyState.Entering: UpdateEntering(); break;
                 case EnemyState.Diving: UpdateDiving(); break;
+                case EnemyState.FlyThrough: UpdateFlyThrough(); break;
                 // Formation: quieto en slot. Dead: el GO está desactivado, no llega acá.
             }
 
@@ -209,6 +240,20 @@ namespace V2
             }
         }
 
+        private void UpdateFlyThrough()
+        {
+            float t = Mathf.Clamp01((Time.time - flyTime) / flyTotal);
+            float u = 1f - t;
+            transform.position = u * u * flyStart + 2f * u * t * flyControl + t * t * flyEnd;
+
+            if (t < 1f) return;
+
+            State = EnemyState.Dead;
+            gameFlow?.OnEnemyEscaped(this);
+            gameObject.SetActive(false);
+        }
+
+
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (!other.TryGetComponent<Bullet>(out Bullet bullet)) return;
@@ -231,7 +276,7 @@ namespace V2
             }
 
             // Puntaje por estado (02-datos): picada paga pointsMoving, formación pointsFormation.
-            int pts = State == EnemyState.Diving ? pointsMoving : pointsFormation;
+            int pts = State == EnemyState.Diving || State == EnemyState.FlyThrough ? pointsMoving : pointsFormation;
             scoreManager?.Add(pts);
             if (audioSource != null && explosionClip != null)
             {
