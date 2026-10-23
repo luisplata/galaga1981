@@ -43,6 +43,8 @@ namespace V2
         [SerializeField] private AudioSource audioSource;
         [SerializeField] private AudioClip explosionClip;
         [SerializeField] private SpriteRenderer spriteRenderer; // flash en hit sobreviviente (Boss)
+        [SerializeField] private GameObject heldShip;           // nave retenida (solo Boss)
+        [SerializeField] private Vector2 carrierHold = new(4.2f, 5f); // parking del carrier
 
         private static readonly Color HitFlashColor = new(1f, 0.3f, 0.3f);
         private const float HitFlashDuration = 0.08f;
@@ -59,10 +61,20 @@ namespace V2
         public Vector2 SlotPosition { get; private set; }
         public bool IsAlive => State != EnemyState.Dead;
 
+        /// <summary>Boss que retiene una nave capturada: no pica ni re-dispara tractor.</summary>
+        public bool IsCarrier { get; private set; }
+
+        /// <summary>Haz tractor del prefab (Boss); null en Guard/Grunt.</summary>
+        public TractorBeam Beam { get; private set; }
+
+        /// <summary>El player llega por GameFlow (no se toca InitRefs ni el prefab de escena).</summary>
+        public Transform PlayerTransform => gameFlow != null ? gameFlow.PlayerTransform : null;
+
         private void Awake()
         {
             if (audioSource == null) audioSource = GetComponent<AudioSource>();
             if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
+            Beam = GetComponentInChildren<TractorBeam>(true);
             initialHp = hp;
         }
 
@@ -93,20 +105,23 @@ namespace V2
         /// </summary>
         public void StartDive(float playerX)
         {
-            if (State != EnemyState.Formation) return;
+            if (State != EnemyState.Formation || IsCarrier) return;
             divePlayerX = playerX;
             divingDown = true;
             State = EnemyState.Diving;
         }
 
         /// <summary>
-        /// Re-uso para la próxima ola: restaura HP y apaga el flash. El estado lo fija AssignSlot.
+        /// Re-uso para la próxima ola: restaura HP/flash y limpia el estado de carrier
+        /// (el pool reutiliza instancias entre olas y niveles).
         /// </summary>
         public void ResetEnemy()
         {
             hp = initialHp;
             hitFlashTimer = 0f;
             if (spriteRenderer != null) spriteRenderer.color = Color.white;
+            Beam?.Cut();
+            ReleaseHeldShip();
         }
 
         /// <summary>
@@ -117,6 +132,28 @@ namespace V2
         {
             scoreManager = sm;
             gameFlow = gf;
+        }
+
+        /// <summary>
+        /// El haz alcanzó al jugador: este Boss pasa a carrier, se estaciona y retiene la nave.
+        /// Idempotente: sólo desde Formation y si todavía no es carrier.
+        /// </summary>
+        public void OnBeamHitPlayer()
+        {
+            if (State != EnemyState.Formation || IsCarrier) return;
+
+            IsCarrier = true;
+            transform.position = new Vector3(carrierHold.x, carrierHold.y, 0f);
+            if (heldShip != null) heldShip.SetActive(true);
+            Beam?.Cut();
+            gameFlow?.OnPlayerCaptured(this);
+        }
+
+        /// <summary>Apaga la nave retenida y libera el flag de carrier (sin rescate).</summary>
+        public void ReleaseHeldShip()
+        {
+            if (heldShip != null) heldShip.SetActive(false);
+            IsCarrier = false;
         }
 
         private void Update()
@@ -202,6 +239,14 @@ namespace V2
             }
 
             State = EnemyState.Dead;
+            bool wasCarrier = IsCarrier;
+            if (wasCarrier)
+            {
+                // Rescate: cortar el haz, soltar la nave y avisar UNA vez antes del kill.
+                Beam?.Cut();
+                ReleaseHeldShip();
+                gameFlow?.OnCarrierDestroyed(this);
+            }
             gameFlow?.OnEnemyKilled(this); // libera el slot (hueco) y avisa al conteo de grilla
             gameObject.SetActive(false); // slot queda como hueco (no se rellena en la misma ola)
         }

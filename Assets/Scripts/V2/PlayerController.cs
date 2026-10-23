@@ -14,9 +14,19 @@ namespace V2
         [SerializeField] private float resetX = 0f;
         [SerializeField] private InputDrag inputDrag;
         [SerializeField] private Camera gameCamera;
+        [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private Collider2D bodyCollider;
 
         private Vector3 shipStartWorld;
         private bool dragging;
+        private bool captured;
+
+        private void Awake()
+        {
+            // Fallback defensivo: el prefab los wirea, pero la instancia puede quedar sin refs.
+            if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
+            if (bodyCollider == null) bodyCollider = GetComponent<Collider2D>();
+        }
 
         private void OnEnable()
         {
@@ -38,6 +48,7 @@ namespace V2
 
         private void OnDragStarted()
         {
+            if (captured) return; // capturado: InputDrag puede reactivar el arrastre
             dragging = true;
             shipStartWorld = transform.position;
         }
@@ -49,7 +60,7 @@ namespace V2
 
         private void Update()
         {
-            if (!dragging || inputDrag == null) return;
+            if (captured || !dragging || inputDrag == null) return;
 
             Camera cam = gameCamera != null ? gameCamera : Camera.main;
             if (cam == null) return;
@@ -66,6 +77,37 @@ namespace V2
         public void ResetPosition()
         {
             transform.position = new Vector3(resetX, fixedY, 0f);
+        }
+
+        /// <summary>Captura: la nave desaparece y el arrastre queda bloqueado hasta el respawn.</summary>
+        public void Capture()
+        {
+            captured = true;
+            dragging = false;
+            SetVisible(false);
+        }
+
+        /// <summary>Respawn tras la captura: vuelve al centro visible y habilitado.</summary>
+        public void Respawn()
+        {
+            ResetPosition();
+            captured = false;
+            SetVisible(true);
+        }
+
+        /// <summary>Reset de run (StartGame): posición inicial y nave visible.</summary>
+        public void ResetForRun()
+        {
+            ResetPosition();
+            captured = false;
+            dragging = false;
+            SetVisible(true);
+        }
+
+        private void SetVisible(bool visible)
+        {
+            if (spriteRenderer != null) spriteRenderer.enabled = visible;
+            if (bodyCollider != null) bodyCollider.enabled = visible;
         }
     }
 }

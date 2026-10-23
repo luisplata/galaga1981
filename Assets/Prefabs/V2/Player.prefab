@@ -269,8 +269,11 @@ MonoBehaviour:
   minX: -4.8
   maxX: 4.8
   fixedY: -7.5
+  resetX: 0
   inputDrag: {fileID: 2121425142601029894}
   gameCamera: {fileID: 0}
+  spriteRenderer: {fileID: 2365918726988199142}
+  bodyCollider: {fileID: 2634230729729655881}
 --- !u!114 &5827962307293658852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -285,7 +288,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::V2.Autofire
   fireInterval: 0.25
   maxShots: 2
+  dualMaxShots: 4
+  dualOffsetX: 0.15
   bulletSpeed: 15
+  spawnOffsetY: 0.6
   bulletPrefab: {fileID: 7494610883742881063, guid: 274118449819bbf4290e1b0e50f17c18,
     type: 3}
   laserClip: {fileID: 8300000, guid: 2eec346b1e9aa024c8cfff1b52625171, type: 3}

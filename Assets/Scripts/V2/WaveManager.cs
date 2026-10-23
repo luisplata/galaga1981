@@ -25,19 +25,30 @@ namespace V2
         [SerializeField] private float diveCooldownMax = 8f;
         [SerializeField] private int maxDiversAtOnce = 2;
 
+        // Tractor (M2): desde nivel 3, 1 Boss por ciclo cada 10-14 s.
+        [SerializeField] private float tractorCooldownMin = 10f;
+        [SerializeField] private float tractorCooldownMax = 14f;
+        [SerializeField] private int tractorMinLevel = 3;
+
         private Coroutine waveLoop;
         private Coroutine diveScheduler;
+        private Coroutine tractorScheduler;
         private bool wavesActive;
 
+        /// <summary>Nivel actual (arranca en 1 y lo resetea StartWaves).</summary>
+        public int CurrentLevel { get; private set; } = 1;
+
         /// <summary>
-        /// Lanza el ciclo de olas infinitas y el scheduler de picadas (desde GameFlow.StartGame).
+        /// Lanza el ciclo de olas infinitas, las picadas y el tractor (desde GameFlow.StartGame).
         /// </summary>
         public void StartWaves()
         {
             StopWaves();
+            CurrentLevel = 1;
             wavesActive = true;
             waveLoop = StartCoroutine(WaveLoop());
             diveScheduler = StartCoroutine(DiveScheduler());
+            tractorScheduler = StartCoroutine(TractorScheduler());
         }
 
         public void StopWaves()
@@ -45,6 +56,7 @@ namespace V2
             wavesActive = false;
             if (waveLoop != null) { StopCoroutine(waveLoop); waveLoop = null; }
             if (diveScheduler != null) { StopCoroutine(diveScheduler); diveScheduler = null; }
+            if (tractorScheduler != null) { StopCoroutine(tractorScheduler); tractorScheduler = null; }
         }
 
         /// <summary>
@@ -54,6 +66,15 @@ namespace V2
         public void OnEnemyKilled(Enemy e)
         {
             if (formation != null) formation.NotifyKilled(e);
+        }
+
+        /// <summary>
+        /// El Boss capturó al jugador: sale del conteo de la grilla (sin puntaje) para que la
+        /// ola pueda cerrar y el carrier quede estacionado entre niveles.
+        /// </summary>
+        public void OnPlayerCaptured(Enemy carrier)
+        {
+            if (formation != null) formation.NotifyCarrierLeave(carrier);
         }
 
         /// <summary>
@@ -109,6 +130,25 @@ namespace V2
                     if (diver == null) break;
                     diver.StartDive(player != null ? player.position.x : 0f);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Timer 10-14 s → un Boss en Formation arranca el tractor. Sólo nivel ≥3 y nunca
+        /// con la grilla vacía (PickTractorBoss devuelve null y el ciclo sigue).
+        /// </summary>
+        private IEnumerator TractorScheduler()
+        {
+            while (wavesActive)
+            {
+                yield return new WaitForSeconds(Random.Range(tractorCooldownMin, tractorCooldownMax));
+                if (!wavesActive) yield break;
+                if (CurrentLevel < tractorMinLevel) continue;
+                if (formation == null) continue;
+
+                Enemy boss = formation.PickTractorBoss();
+                if (boss == null || boss.Beam == null) continue;
+                boss.Beam.BeginCycle();
             }
         }
     }

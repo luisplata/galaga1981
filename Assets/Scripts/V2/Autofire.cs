@@ -11,6 +11,8 @@ namespace V2
     {
         [SerializeField] private float fireInterval = 0.25f;
         [SerializeField] private int maxShots = 2;
+        [SerializeField] private int dualMaxShots = 4;
+        [SerializeField] private float dualOffsetX = 0.15f;
         [SerializeField] private float bulletSpeed = 15f;
         [SerializeField] private float spawnOffsetY = 0.6f;
         [SerializeField] private Bullet bulletPrefab;
@@ -20,6 +22,9 @@ namespace V2
         private AudioSource audioSource;
         private float timer;
         private bool fireEnabled = true;
+
+        /// <summary>Dual Fighter: 2 balas por volley (±0.15) y tope 4 activas.</summary>
+        public bool IsDual { get; private set; }
 
         private void Awake()
         {
@@ -32,6 +37,11 @@ namespace V2
             if (!enabled) timer = 0f;
         }
 
+        public void SetDual(bool value)
+        {
+            IsDual = value;
+        }
+
         private void Update()
         {
             if (!fireEnabled) return;
@@ -39,19 +49,34 @@ namespace V2
             timer += Time.deltaTime;
             activeBullets.RemoveAll(bullet => bullet == null);
 
-            if (timer >= fireInterval && activeBullets.Count < maxShots)
-            {
-                timer = 0f;
-                Vector3 spawn = transform.position + Vector3.up * spawnOffsetY;
-                Bullet bullet = Instantiate(bulletPrefab, spawn, Quaternion.identity);
-                bullet.Init(bulletSpeed);
-                activeBullets.Add(bullet);
+            int need = IsDual ? 2 : 1;
+            int limit = IsDual ? dualMaxShots : maxShots;
+            if (timer < fireInterval || activeBullets.Count + need > limit) return;
 
-                if (audioSource != null && laserClip != null)
-                {
-                    audioSource.PlayOneShot(laserClip);
-                }
+            timer = 0f;
+            Vector3 spawn = transform.position + Vector3.up * spawnOffsetY;
+            if (IsDual)
+            {
+                // Volley doble: una bala a cada lado del eje de la nave.
+                SpawnBullet(spawn + Vector3.right * -dualOffsetX);
+                SpawnBullet(spawn + Vector3.right * dualOffsetX);
             }
+            else
+            {
+                SpawnBullet(spawn);
+            }
+
+            if (audioSource != null && laserClip != null)
+            {
+                audioSource.PlayOneShot(laserClip);
+            }
+        }
+
+        private void SpawnBullet(Vector3 spawn)
+        {
+            Bullet bullet = Instantiate(bulletPrefab, spawn, Quaternion.identity);
+            bullet.Init(bulletSpeed);
+            activeBullets.Add(bullet);
         }
     }
 }

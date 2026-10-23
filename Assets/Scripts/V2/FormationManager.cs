@@ -77,10 +77,12 @@ namespace V2
         /// <summary>
         /// Un enemigo murió: baja el contador; si la grilla queda vacía → OnFormationCleared
         /// (WaveManager lanza la siguiente ola). El slot muerto queda como hueco.
+        /// Guard con Remove: el carrier ya salió del conteo y su kill NO debe restar dos veces.
         /// </summary>
         public void NotifyKilled(Enemy e)
         {
-            AliveCount = Mathf.Max(0, AliveCount - 1);
+            if (!active.Remove(e)) return;
+            AliveCount = active.Count;
             if (AliveCount == 0)
             {
                 OnFormationCleared?.Invoke();
@@ -88,15 +90,29 @@ namespace V2
         }
 
         /// <summary>
-        /// Elige un enemigo vivo en Formation al azar (reservoir sin alloc). null si no hay.
+        /// El enemigo fue capturado como carrier: sale del conteo sin puntaje. Si queda 0,
+        /// la ola puede cerrar (evita soft-lock del carrier estacionado).
         /// </summary>
-        public Enemy PickDiver()
+        public void NotifyCarrierLeave(Enemy e)
+        {
+            if (!active.Remove(e)) return;
+            AliveCount = active.Count;
+            if (AliveCount == 0)
+            {
+                OnFormationCleared?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// Elige un Boss vivo en Formation que no sea carrier (tractor, uno por ciclo).
+        /// </summary>
+        public Enemy PickTractorBoss()
         {
             int count = 0;
             for (int i = 0; i < active.Count; i++)
             {
                 Enemy e = active[i];
-                if (e != null && e.State == EnemyState.Formation) count++;
+                if (IsTractorCandidate(e)) count++;
             }
 
             if (count == 0) return null;
@@ -105,7 +121,43 @@ namespace V2
             for (int i = 0; i < active.Count; i++)
             {
                 Enemy e = active[i];
-                if (e != null && e.State == EnemyState.Formation)
+                if (IsTractorCandidate(e))
+                {
+                    if (pick == 0) return e;
+                    pick--;
+                }
+            }
+            return null;
+        }
+
+        private static bool IsTractorCandidate(Enemy e)
+        {
+            return e != null
+                   && e.Type == EnemyType.Boss
+                   && e.State == EnemyState.Formation
+                   && !e.IsCarrier;
+        }
+
+        /// <summary>
+        /// Elige un enemigo vivo en Formation al azar (reservoir sin alloc). null si no hay.
+        /// El carrier queda excluido: no pica mientras retiene la nave.
+        /// </summary>
+        public Enemy PickDiver()
+        {
+            int count = 0;
+            for (int i = 0; i < active.Count; i++)
+            {
+                Enemy e = active[i];
+                if (e != null && e.State == EnemyState.Formation && !e.IsCarrier) count++;
+            }
+
+            if (count == 0) return null;
+
+            int pick = UnityEngine.Random.Range(0, count);
+            for (int i = 0; i < active.Count; i++)
+            {
+                Enemy e = active[i];
+                if (e != null && e.State == EnemyState.Formation && !e.IsCarrier)
                 {
                     if (pick == 0) return e;
                     pick--;

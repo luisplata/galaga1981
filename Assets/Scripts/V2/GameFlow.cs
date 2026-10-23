@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -30,6 +31,13 @@ namespace V2
         [SerializeField] private WaveManager waveManager;
         [SerializeField] private InputDrag inputDrag;
         [SerializeField] private Autofire autofire;
+        [SerializeField] private float respawnDelay = 1.2f; // tunable: M3 lo reemplaza por vidas
+
+        private Enemy currentCarrier;
+        private Coroutine respawnRoutine;
+
+        /// <summary>Transform del jugador para el tractor (Enemy.PlayerTransform).</summary>
+        public Transform PlayerTransform => player != null ? player.transform : null;
 
         private void Start()
         {
@@ -39,7 +47,21 @@ namespace V2
         public void StartGame()
         {
             scoreManager?.ResetScore();
-            player?.ResetPosition();
+
+            // Run limpia: sin respawn pendiente, sin carrier y sin dual.
+            if (respawnRoutine != null)
+            {
+                StopCoroutine(respawnRoutine);
+                respawnRoutine = null;
+            }
+            if (currentCarrier != null)
+            {
+                currentCarrier.ReleaseHeldShip();
+                currentCarrier = null;
+            }
+            autofire?.SetDual(false);
+            player?.ResetForRun();
+
             waveManager?.StartWaves();
             SetState(State.Playing);
         }
@@ -49,6 +71,48 @@ namespace V2
             // M1: el kill ya no termina la partida — notifica a WaveManager para el conteo
             // de la grilla (ola siguiente automática cuando queda vacía).
             waveManager?.OnEnemyKilled(killedEnemy);
+        }
+
+        /// <summary>
+        /// Un Boss capturó al jugador. NUNCA dispara GameOver: apaga fuego, pierde dual,
+        /// esconde la nave y programa el respawn simple (1.2 s).
+        /// </summary>
+        public void OnPlayerCaptured(Enemy carrier)
+        {
+            if (CurrentState != State.Playing) return;
+
+            // A lo sumo una nave retenida: si ya había otro carrier, se descarta.
+            if (currentCarrier != null && currentCarrier != carrier)
+            {
+                currentCarrier.ReleaseHeldShip();
+            }
+            currentCarrier = carrier;
+
+            waveManager?.OnPlayerCaptured(carrier);
+            autofire?.SetDual(false);
+            if (autofire != null) autofire.SetFireEnabled(false);
+            player?.Capture();
+
+            if (respawnRoutine != null) StopCoroutine(respawnRoutine);
+            respawnRoutine = StartCoroutine(RespawnRoutine());
+        }
+
+        /// <summary>
+        /// El carrier murió: rescate → Dual Fighter. Sólo si era el carrier vigente.
+        /// </summary>
+        public void OnCarrierDestroyed(Enemy carrier)
+        {
+            if (currentCarrier != carrier) return;
+            currentCarrier = null;
+            autofire?.SetDual(true);
+        }
+
+        private IEnumerator RespawnRoutine()
+        {
+            yield return new WaitForSeconds(respawnDelay);
+            respawnRoutine = null;
+            player?.Respawn();
+            if (autofire != null) autofire.SetFireEnabled(CurrentState == State.Playing);
         }
 
         private void SetState(State newState)
