@@ -77,7 +77,6 @@ jobs:
           ITCH_USER: peryloth
           ITCH_GAME: galaga-1981
           PACKAGE: webgl-build/Galaga1981-webgl.zip
-          VERSION: 1.0
       - name: Deploy Android
         uses: yeslayla/butler-publish-itchio-action@master
         env:
@@ -86,4 +85,3 @@ jobs:
           ITCH_USER: peryloth
           ITCH_GAME: galaga-1981
           PACKAGE: android-build/Galaga1981.apk
-          VERSION: 1.0
