@@ -14,11 +14,8 @@ jobs:
         run: |
           set +e
           R=/repos/${{ github.repository }}/releases
-          SHA=$(gh api /repos/${{ github.repository }}/commits/main --jq .sha)
-          echo "HEAD=$SHA"
-          echo "D: commitish + generate_notes"
-          gh api -X POST $R -f tag_name=v1.2.0 -f name="probe D" -f target_commitish=$SHA -F generate_release_notes=true 2>&1 | head -c 220; echo
-          echo "E: solo generate_notes"
-          gh api -X POST $R -f tag_name=v1.2.1 -f name="probe E" -F generate_release_notes=true 2>&1 | head -c 220; echo
-          echo "== releases =="
-          gh api $R --jq '.[]|.tag_name'
+          OLD=1a2a5b07be465ae8ef18f9cda03dcba26d033766
+          echo "F: commit viejo + generate_notes"
+          gh api -X POST $R -f tag_name=v1.2.2 -f name="probe F" -f target_commitish=$OLD -F generate_release_notes=true 2>&1 | head -c 220; echo
+          echo "G: commit viejo SIN notes"
+          gh api -X POST $R -f tag_name=v1.2.3 -f name="probe G" -f target_commitish=$OLD 2>&1 | head -c 220; echo
