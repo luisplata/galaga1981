@@ -162,7 +162,12 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.validate.outputs.tag }}
-          target_commitish: ${{ github.sha }}
           name: Galaga1981 ${{ needs.validate.outputs.tag }}
-          generate_release_notes: true
+          # NO usar target_commitish con un SHA: GITHUB_TOKEN devuelve 403
+          # ("Resource not accessible by integration") si ese commit ya no es el
+          # HEAD. Dejamos el commit del build en el cuerpo para trazabilidad.
+          body: |
+            Build commit: `${{ github.sha }}`
+            Version code: `${{ needs.validate.outputs.versionCode }}`
+            Versión: `${{ needs.validate.outputs.version }}`
           files: release/Galaga1981-${{ needs.validate.outputs.version }}.aab
