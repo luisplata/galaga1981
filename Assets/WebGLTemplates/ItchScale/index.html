@@ -11,14 +11,21 @@
             overflow: hidden;
             background: #000;
         }
+        /* El contenedor ocupa TODO el iframe de Itch (o la ventana). */
         #game-container {
-            width: 100%; height: 100%;
+            position: fixed;
+            top: 0; right: 0; bottom: 0; left: 0;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         #unity-canvas {
+            display: block;
             background: #000;
+            /* Tamaño inicial explícito: evita que Unity dimensione el buffer
+               con el default del navegador (300x150, apaisado). */
+            width: 1080px;
+            height: 1920px;
         }
         #loading {
             position: fixed;
@@ -33,13 +40,17 @@
 </head>
 <body>
     <div id="game-container">
-        <canvas id="unity-canvas" tabindex="-1"></canvas>
+        <canvas id="unity-canvas" width="1080" height="1920" tabindex="-1"></canvas>
         <div id="loading">Cargando...</div>
     </div>
     <script src="Build/{{{ LOADER_FILENAME }}}"></script>
     <script>
         var canvas = document.querySelector("#unity-canvas");
         var loading = document.querySelector("#loading");
+
+        // Resolución nativa del juego: portrait 9:16.
+        var GAME_W = 1080;
+        var GAME_H = 1920;
 
         var config = {
             dataUrl: "Build/{{{ DATA_FILENAME }}}",
@@ -48,21 +59,31 @@
             streamingAssetsUrl: "StreamingAssets",
             companyName: "{{{ COMPANY_NAME }}}",
             productName: "{{{ PRODUCT_NAME }}}",
-            productVersion: "{{{ PRODUCT_VERSION }}}"
+            productVersion: "{{{ PRODUCT_VERSION }}}",
+            // Mantiene el buffer de render en GAME_W x GAME_H y deja que el
+            // escalado lo haga SOLO el CSS (letterbox). Sin esto Unity toma el
+            // tamaño del canvas en el momento del init y deforma el contenido.
+            matchWebGLToCanvasSize: false
         };
 
-        // Escala el canvas para que CABE ENTERO en el contenedor (letterbox,
-        // respetando la proporción vertical 9:16) — ideal para iframes de Itch.
-        var GAME_W = 1080;
-        var GAME_H = 1920;
+        // Buffer de render fijo (no depende del viewport ni del DPR).
+        canvas.width = GAME_W;
+        canvas.height = GAME_H;
 
+        // Ajusta el tamaño VISUAL del canvas respetando 9:16 y centrándolo.
         function resize() {
-            var cw = canvas.width || GAME_W;
-            var ch = canvas.height || GAME_H;
-            var scale = Math.min(window.innerWidth / cw, window.innerHeight / ch);
-            canvas.style.width = (cw * scale) + "px";
-            canvas.style.height = (ch * scale) + "px";
+            var viewportW = window.innerWidth || document.documentElement.clientWidth || GAME_W;
+            var viewportH = window.innerHeight || document.documentElement.clientHeight || GAME_H;
+
+            var scale = Math.min(viewportW / GAME_W, viewportH / GAME_H);
+            if (!isFinite(scale) || scale <= 0) return;
+
+            canvas.style.width = Math.floor(GAME_W * scale) + "px";
+            canvas.style.height = Math.floor(GAME_H * scale) + "px";
         }
+
+        // CRÍTICO: aplicar antes de crear la instancia.
+        resize();
 
         window.addEventListener("resize", resize);
         window.addEventListener("orientationchange", resize);
