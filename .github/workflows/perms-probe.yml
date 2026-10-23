@@ -13,12 +13,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set +e
-          echo "== intento EXACTO de release v1.1.0 =="
-          gh api -X POST /repos/${{ github.repository }}/releases \
-            -f tag_name=v1.1.0 \
-            -f target_commitish=1a2a5b07be465ae8ef18f9cda03dcba26d033766 \
-            -f name="Galaga1981 v1.1.0" \
-            -F generate_release_notes=true 2>&1 | head -c 500
-          echo ""
-          echo "== releases actuales =="
-          gh api /repos/${{ github.repository }}/releases --jq '.[]|{tag_name,id}' | head -5
+          R=/repos/${{ github.repository }}/releases
+          echo "A: v1.1.0 minimo"
+          gh api -X POST $R -f tag_name=v1.1.0 -f name="probe A" 2>&1 | head -c 300; echo
+          echo "B: v1.1.1 minimo"
+          gh api -X POST $R -f tag_name=v1.1.1 -f name="probe B" 2>&1 | head -c 300; echo
+          echo "C: v9.9.9 con generate_release_notes"
+          gh api -X POST $R -f tag_name=v9.9.9 -f name="probe C" -F generate_release_notes=true 2>&1 | head -c 300; echo
+          echo "== releases =="
+          gh api $R --jq '.[]|.tag_name'
