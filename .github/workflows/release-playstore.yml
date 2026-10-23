@@ -59,9 +59,11 @@ jobs:
           esac
           NEXT_TAG="v${MAJOR}.${MINOR}.${PATCH}"
           NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
-          # versionCode de Play Store: entero monotónico derivado del SemVer.
-          # 1.1.0 -> 10100. Evita depender del valor (estático) de ProjectSettings.
-          NEXT_VERSION_CODE=$((MAJOR * 10000 + MINOR * 100 + PATCH))
+          # versionCode de Play Store: DEBE ser mayor al publicado (1.0.2 -> 1000002).
+          # Esquema de Unity 6 para Android: major*1e6 + minor*1e3 + patch.
+          #   1.0.2 -> 1000002   1.1.0 -> 1001000
+          # No cambiar la escala: un valor menor bloquea la actualización de usuarios.
+          NEXT_VERSION_CODE=$((MAJOR * 1000000 + MINOR * 1000 + PATCH))
           echo "Next tag: $NEXT_TAG (version: $NEXT_VERSION, versionCode: $NEXT_VERSION_CODE)"
           echo "tag=$NEXT_TAG" >> "$GITHUB_OUTPUT"
           echo "version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
