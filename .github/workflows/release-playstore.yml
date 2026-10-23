@@ -26,6 +26,7 @@ jobs:
     outputs:
       tag: ${{ steps.compute.outputs.tag }}
       version: ${{ steps.compute.outputs.version }}
+      versionCode: ${{ steps.compute.outputs.versionCode }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -58,9 +59,13 @@ jobs:
           esac
           NEXT_TAG="v${MAJOR}.${MINOR}.${PATCH}"
           NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
-          echo "Next tag: $NEXT_TAG (version: $NEXT_VERSION)"
+          # versionCode de Play Store: entero monotónico derivado del SemVer.
+          # 1.1.0 -> 10100. Evita depender del valor (estático) de ProjectSettings.
+          NEXT_VERSION_CODE=$((MAJOR * 10000 + MINOR * 100 + PATCH))
+          echo "Next tag: $NEXT_TAG (version: $NEXT_VERSION, versionCode: $NEXT_VERSION_CODE)"
           echo "tag=$NEXT_TAG" >> "$GITHUB_OUTPUT"
           echo "version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
+          echo "versionCode=$NEXT_VERSION_CODE" >> "$GITHUB_OUTPUT"
 
       - name: Pre-check tag & release idempotency
         env:
@@ -108,6 +113,7 @@ jobs:
           buildsPath: build
           versioning: Custom
           version: ${{ needs.validate.outputs.version }}
+          androidVersionCode: ${{ needs.validate.outputs.versionCode }}
           androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           androidKeystoreName: .github/release.keystore
           androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
